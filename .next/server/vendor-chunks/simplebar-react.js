@@ -6,19 +6,14 @@
  * or disable the default devtool with "devtool: false".
  * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
-exports.id = "vendor-chunks/simplebar-react";
-exports.ids = ["vendor-chunks/simplebar-react"];
+exports.id = 'vendor-chunks/simplebar-react';
+exports.ids = ['vendor-chunks/simplebar-react'];
 exports.modules = {
-
-/***/ "./node_modules/simplebar-react/dist/simplebar.min.css":
-/*!*************************************************************!*\
+  /***/ './node_modules/simplebar-react/dist/simplebar.min.css':
+    /*!*************************************************************!*\
   !*** ./node_modules/simplebar-react/dist/simplebar.min.css ***!
   \*************************************************************/
-/***/ (() => {
-
-
-
-/***/ })
-
+    /***/ () => {
+      /***/
+    },
 };
-;
