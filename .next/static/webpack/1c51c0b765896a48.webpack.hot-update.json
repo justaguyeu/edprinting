@@ -1,0 +1,1 @@
+{"c":["pages/stockreport","webpack"],"r":["pages/stockview"],"m":["./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=D%3A%5Cmaterial-kit-react%5Csrc%5Cpages%5Cstockview.js&page=%2Fstockview!","./src/pages/stockview.js","./src/sections/stockview/customers-table.js","./src/sections/customer/customers-table.js"]}

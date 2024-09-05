@@ -1,0 +1,1 @@
+{"c":["pages/stockreport","webpack"],"r":["pages/salesmonthly"],"m":["./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=D%3A%5Cmaterial-kit-react%5Csrc%5Cpages%5Csalesmonthly.js&page=%2Fsalesmonthly!","./src/pages/salesmonthly.js","./src/sections/salesmonthly/customers-table.js"]}
