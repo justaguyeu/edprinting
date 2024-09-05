@@ -18,7 +18,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
@@ -29,17 +29,17 @@ export const CustomersTable = (props) => {
     items = [],
     onDeselectAll,
     onDeselectOne,
-    onPageChange = () => { },
+    onPageChange = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
   const [dailyTotals, setDailyTotals] = useState([]);
   const [monthlyTotals, setMonthlyTotals] = useState({});
   const [month, setMonth] = useState('');
@@ -54,14 +54,17 @@ export const CustomersTable = (props) => {
         setLoading(true);
         const response = await axios.get(`${BASE_URL}/api/data/monthly/`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { month }
+          params: { month },
         });
 
         setDailyTotals(response.data.daily_totals);
         setMonthlyTotals(response.data.monthly_totals);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching monthly report:', error.response ? error.response.data : error.message);
+        console.error(
+          'Error fetching monthly report:',
+          error.response ? error.response.data : error.message,
+        );
         setLoading(false);
       }
     } else {
@@ -84,7 +87,7 @@ export const CustomersTable = (props) => {
       setMonth(monthParam);
       fetchMonthlyReport(monthParam);
     }
-  }, [router .search]);
+  }, [router.search]);
 
   const calculateDailyProfit = (total) => {
     return Number(total.total_sales) - Number(total.total_expenses);
@@ -97,158 +100,132 @@ export const CustomersTable = (props) => {
       currency: 'TZS',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(numericValue).replace('TZS', 'Tsh');
+    })
+      .format(numericValue)
+      .replace('TZS', 'Tsh');
   };
 
   return (
-    <><Card spacing={3} sx={{
-      p: 2, alignItems: 'center',
-      display: 'flex',
-      flexDirection: 'row',
-    }}>
-      <CardContent>
-      <label htmlFor="month-select">Select Month: </label>
-        <input
-          type="month"
-          id="month-select"
-          value={month}
-          onChange={handleMonthChange}
-        />
-   
-</CardContent>
-    </Card>
-    {loading ? (
+    <>
+      <Card
+        spacing={3}
+        sx={{
+          p: 2,
+          alignItems: 'center',
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
+        <CardContent>
+          <label htmlFor="month-select">Select Month: </label>
+          <input
+            type="month"
+            id="month-select"
+            value={month}
+            onChange={handleMonthChange}
+          />
+        </CardContent>
+      </Card>
+      {loading ? (
         <p>Loading...</p>
       ) : (
         <div>
           {dailyTotals.length > 0 ? (
-              <>
-                <CardContent>
-                  <Card>
-
-                    <Scrollbar>
-                      <Box sx={{ minWidth: 800 }}>
-                        <Table>
-                          <TableHead>
-                            <Typography variant="h6" sx={{
-                              p: 2, alignItems: 'center',
-                              display: 'flex',
-                              flexDirection: 'row',
-                            }}>
-                              Sales
-                            </Typography>
-                            <TableRow>
-
-                              <TableCell>
-                              Date
-                              </TableCell>
-                              <TableCell>
-                              TOTAL DAILY PRICE
-                              </TableCell>
-                              <TableCell>
-                              TOTAL DAILY EXPENSES
-                              </TableCell>
-                              <TableCell>
-                              TOTAL DAILY PROFIT
-                              </TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {dailyTotals.map((total) => {
-
-                              return (
-                                <TableRow
-
-                                >
-                                  <TableCell>
-                                  {total.date}
-                                  </TableCell>
-                                  <TableCell>
-                                  {formatCurrency(total.total_sales)}
-                                  </TableCell>
-                                  <TableCell>
-                                  {formatCurrency(total.total_expenses)}
-                                  </TableCell>
-                                  <TableCell>
-                                  {formatCurrency(calculateDailyProfit(total))}
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })}
-                          </TableBody>
-                          
-                        </Table>
-
-                      </Box>
-
-                    </Scrollbar>
-                  </ Card>
-
-
-
-                </CardContent>
-
-                
-
-                <CardContent>
+            <>
+              <CardContent>
+                <Card>
                   <Scrollbar>
                     <Box sx={{ minWidth: 800 }}>
-
                       <Table>
                         <TableHead>
-                          <Typography variant="h6" sx={{
-                            p: 2, alignItems: 'center',
-                            display: 'flex',
-                            flexDirection: 'row',
-                          }}>
-                            Monthly Totals
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              p: 2,
+                              alignItems: 'center',
+                              display: 'flex',
+                              flexDirection: 'row',
+                            }}
+                          >
+                            Sales
                           </Typography>
                           <TableRow>
-
-                            <TableCell>
-                            TOTAL MONTHLY PRICE
-                            </TableCell>
-                            <TableCell>
-                            TOTAL MONTHLY EXPENSES
-                            </TableCell>
-                            <TableCell>
-                            TOTAL MONTHLY PROFIT
-                            </TableCell>
+                            <TableCell>Date</TableCell>
+                            <TableCell>TOTAL DAILY PRICE</TableCell>
+                            <TableCell>TOTAL DAILY EXPENSES</TableCell>
+                            <TableCell>TOTAL DAILY PROFIT</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
-
-
-
-                          <TableRow
-
-                          >
-                            <TableCell>
-                            {formatCurrency(monthlyTotals.total_sales)}
-                            </TableCell>
-                            <TableCell>
-                            {formatCurrency(monthlyTotals.total_expenses)}
-                            </TableCell>
-                            <TableCell>
-                            {formatCurrency(monthlyTotals.profit)}
-                            </TableCell>
-                          </TableRow>
-
+                          {dailyTotals.map((total) => {
+                            return (
+                              <TableRow>
+                                <TableCell>{total.date}</TableCell>
+                                <TableCell>
+                                  {formatCurrency(total.total_sales)}
+                                </TableCell>
+                                <TableCell>
+                                  {formatCurrency(total.total_expenses)}
+                                </TableCell>
+                                <TableCell>
+                                  {formatCurrency(calculateDailyProfit(total))}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
                         </TableBody>
                       </Table>
                     </Box>
-
                   </Scrollbar>
-                </CardContent>
+                </Card>
+              </CardContent>
 
-              </>
-            ) : (
-              <p>No data available for the selected month.</p>
-            )}
-          </div>
+              <CardContent>
+                <Scrollbar>
+                  <Box sx={{ minWidth: 800 }}>
+                    <Table>
+                      <TableHead>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            p: 2,
+                            alignItems: 'center',
+                            display: 'flex',
+                            flexDirection: 'row',
+                          }}
+                        >
+                          Monthly Totals
+                        </Typography>
+                        <TableRow>
+                          <TableCell>TOTAL MONTHLY PRICE</TableCell>
+                          <TableCell>TOTAL MONTHLY EXPENSES</TableCell>
+                          <TableCell>TOTAL MONTHLY PROFIT</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            {formatCurrency(monthlyTotals.total_sales)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthlyTotals.total_expenses)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthlyTotals.profit)}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </Box>
+                </Scrollbar>
+              </CardContent>
+            </>
+          ) : (
+            <p>No data available for the selected month.</p>
+          )}
+        </div>
       )}
     </>
-
   );
 };
 
@@ -263,5 +240,5 @@ CustomersTable.propTypes = {
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };

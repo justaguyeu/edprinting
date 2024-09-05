@@ -17,9 +17,8 @@ export const items = [
       <SvgIcon fontSize="small">
         <CurrencyDollarIcon />
       </SvgIcon>
-    )
+    ),
   },
-
 
   // {
   //   title: 'Students',
@@ -49,7 +48,6 @@ export const items = [
   //   )
   // },
 
-
   // {
   //   title: 'Report',
   //   icon: (
@@ -77,7 +75,7 @@ export const items = [
   //       )
   //     }
   //   ]
-  // },  
+  // },
   // {
   //   title: 'Login',
   //   path: '/auth/login',

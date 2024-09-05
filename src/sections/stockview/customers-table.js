@@ -17,7 +17,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
@@ -34,11 +34,11 @@ export const CustomersTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
   const [allStock, setAllStock] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,37 +50,31 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           setLoading(true);
-          
+
           // Fetch data from the first stock endpoint
           const response1 = await axios.get(`${BASE_URL}/api/stock/report/`, {
             headers: { Authorization: `Bearer ${token}` },
-            
-          }); 
+          });
 
           // Fetch data from the second stock endpoint
           const response2 = await axios.get(`${BASE_URL}/api/stock/report2/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          
-          
 
           // Combine the data from both endpoints
           const combinedStock = [
-            ...response1.data.map(item => ({
+            ...response1.data.map((item) => ({
               name: item.item_name,
               quantity: item.total_quantity,
               quantity_used: item.quantity_used,
               remaining_stock: item.remaining_stock,
-              
             })),
-            ...response2.data.map(item => ({
-               name: item.item_name,
+            ...response2.data.map((item) => ({
+              name: item.item_name,
               quantity: `${item.total_quantity} m²`,
               quantity_used: `${item.quantity_used} m²`,
               remaining_stock: `${item.remaining_stock} m²`,
-              
             })),
- 
           ];
           if (combinedStock.length === 0) {
             setAllStock([]);
@@ -89,10 +83,13 @@ export const CustomersTable = (props) => {
             setAllStock(combinedStock);
             setNoStockMessage('');
           }
-          
+
           setLoading(false);
         } catch (error) {
-          console.error('Error fetching stock data:', error.response ? error.response.data : error.message);
+          console.error(
+            'Error fetching stock data:',
+            error.response ? error.response.data : error.message,
+          );
           setLoading(false);
         }
       }
@@ -108,7 +105,9 @@ export const CustomersTable = (props) => {
       currency: 'TZS',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(numericValue).replace('TZS', 'Tsh');
+    })
+      .format(numericValue)
+      .replace('TZS', 'Tsh');
   };
 
   const getFormattedMonthYear = (month) => {
@@ -122,59 +121,35 @@ export const CustomersTable = (props) => {
 
   return (
     <>
-    <CardContent>
-    <Card>
-
-
-        <Scrollbar>
-          <Box sx={{ minWidth: 800 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  
-                  <TableCell>
-                    STOCK NAME
-                  </TableCell>
-                  <TableCell>
-                  QUANTITY/(m&sup2;)
-                  </TableCell>
-                  <TableCell>
-                  USED STOCK/(M&sup2;)
-                  </TableCell>
-                  <TableCell>
-                  REMAINED STOCK/(M&sup2;)
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {allStock.map((item) => {
-
-                  return (
-                    <TableRow
-
-                    >
-                      <TableCell>
-                      {item.name}
-                      </TableCell>
-                      <TableCell>
-                      {item.quantity}
-                      </TableCell>
-                      <TableCell>
-                        {item.quantity_used}
-                      </TableCell>
-                      <TableCell>
-                        {item.remaining_stock}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            
-            </Table>
-          </Box>
-          
-        </Scrollbar>
-        {/* <TablePagination
+      <CardContent>
+        <Card>
+          <Scrollbar>
+            <Box sx={{ minWidth: 800 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>STOCK NAME</TableCell>
+                    <TableCell>QUANTITY/(m&sup2;)</TableCell>
+                    <TableCell>USED STOCK/(M&sup2;)</TableCell>
+                    <TableCell>REMAINED STOCK/(M&sup2;)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {allStock.map((item) => {
+                    return (
+                      <TableRow>
+                        <TableCell>{item.name}</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell>{item.quantity_used}</TableCell>
+                        <TableCell>{item.remaining_stock}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </Box>
+          </Scrollbar>
+          {/* <TablePagination
           component="div"
           count={count}
           onPageChange={onPageChange}
@@ -182,10 +157,9 @@ export const CustomersTable = (props) => {
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]} /> */}
-      </Card>
+        </Card>
       </CardContent>
-      </>
-      
+    </>
   );
 };
 
@@ -200,5 +174,5 @@ CustomersTable.propTypes = {
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };

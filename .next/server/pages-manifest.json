@@ -2,9 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/stockview": "pages/stockview.js",
+  "/stockreport": "pages/stockreport.js",
+  "/salesmonthly": "pages/salesmonthly.js",
   "/salesdaily": "pages/salesdaily.js",
-  "/": "pages/index.js",
-  "/404": "pages/404.js",
-  "/auth/login": "pages/auth/login.js",
-  "/stockreport": "pages/stockreport.js"
+  "/user": "pages/user.js"
 }

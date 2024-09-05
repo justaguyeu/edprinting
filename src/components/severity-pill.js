@@ -3,9 +3,10 @@ import { styled } from '@mui/material/styles';
 
 const SeverityPillRoot = styled('span')(({ theme, ownerState }) => {
   const backgroundColor = theme.palette[ownerState.color].alpha12;
-  const color = theme.palette.mode === 'dark'
-    ? theme.palette[ownerState.color].main
-    : theme.palette[ownerState.color].dark;
+  const color =
+    theme.palette.mode === 'dark'
+      ? theme.palette[ownerState.color].main
+      : theme.palette[ownerState.color].dark;
 
   return {
     alignItems: 'center',
@@ -26,7 +27,7 @@ const SeverityPillRoot = styled('span')(({ theme, ownerState }) => {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     textTransform: 'uppercase',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   };
 });
 
@@ -36,10 +37,7 @@ export const SeverityPill = (props) => {
   const ownerState = { color };
 
   return (
-    <SeverityPillRoot
-      ownerState={ownerState}
-      {...other}
-    >
+    <SeverityPillRoot ownerState={ownerState} {...other}>
       {children}
     </SeverityPillRoot>
   );
@@ -53,6 +51,6 @@ SeverityPill.propTypes = {
     'error',
     'info',
     'warning',
-    'success'
-  ])
+    'success',
+  ]),
 };

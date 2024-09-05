@@ -33,7 +33,10 @@ export const CustomersSearch = () => {
             setNoDataMessage('');
           }
         } catch (error) {
-          console.error('Error fetching stock report:', error.response ? error.response.data : error.message);
+          console.error(
+            'Error fetching stock report:',
+            error.response ? error.response.data : error.message,
+          );
         } finally {
           setLoading(false);
         }
@@ -43,17 +46,17 @@ export const CustomersSearch = () => {
     fetchStockReport('/api/stock/report/', setStockReport);
     fetchStockReport('/api/stock/report2/', setStockReport2);
   }, [selectedMonth]);
-  return(
-  <Card sx={{ p: 2 }}>
-    <div>
-                  <label variant="h6">Select Month:</label>
-                  <input variant="h6"
-                    type="month"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                  />
-                </div>
-    
-  </Card>
-  )
-  }
+  return (
+    <Card sx={{ p: 2 }}>
+      <div>
+        <label variant="h6">Select Month:</label>
+        <input
+          variant="h6"
+          type="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+        />
+      </div>
+    </Card>
+  );
+};

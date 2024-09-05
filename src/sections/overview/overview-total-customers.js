@@ -2,7 +2,14 @@ import PropTypes from 'prop-types';
 import ArrowDownIcon from '@heroicons/react/24/solid/ArrowDownIcon';
 import ArrowUpIcon from '@heroicons/react/24/solid/ArrowUpIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
-import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
+import {
+  Avatar,
+  Card,
+  CardContent,
+  Stack,
+  SvgIcon,
+  Typography,
+} from '@mui/material';
 
 export const OverviewTotalCustomers = (props) => {
   const { difference, positive = false, sx, value } = props;
@@ -17,28 +24,22 @@ export const OverviewTotalCustomers = (props) => {
           spacing={3}
         >
           <Stack spacing={1}>
-            <Typography
-              color="text.secondary"
-              variant="overline"
-            >
+            <Typography color="text.secondary" variant="overline">
               Weekly Expenses
               <Avatar
-            sx={{
-              backgroundColor: 'success.main',
-              height: 56,
-              width: 56
-            }}
-          >
-            <SvgIcon>
-              <UsersIcon />
-            </SvgIcon>
-          </Avatar>
+                sx={{
+                  backgroundColor: 'success.main',
+                  height: 56,
+                  width: 56,
+                }}
+              >
+                <SvgIcon>
+                  <UsersIcon />
+                </SvgIcon>
+              </Avatar>
             </Typography>
-            <Typography variant="h5">
-              {value}
-            </Typography>
+            <Typography variant="h5">{value}</Typography>
           </Stack>
-          
         </Stack>
         {/* {difference && (
           <Stack
@@ -82,6 +83,5 @@ OverviewTotalCustomers.propTypes = {
   difference: PropTypes.number,
   positive: PropTypes.bool,
   value: PropTypes.string.isRequired,
-  sx: PropTypes.object
+  sx: PropTypes.object,
 };
-

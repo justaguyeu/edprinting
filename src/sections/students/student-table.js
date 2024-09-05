@@ -1,6 +1,12 @@
-
 import React, { useEffect, useState } from 'react';
-import { Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@mui/material';
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+} from '@mui/material';
 
 const MyPage = () => {
   const [data, setData] = useState([]);

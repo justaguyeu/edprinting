@@ -6,7 +6,7 @@ import {
   CardActions,
   CardContent,
   Divider,
-  Typography
+  Typography,
 } from '@mui/material';
 
 const user = {
@@ -15,7 +15,7 @@ const user = {
   country: 'Tanzania',
   jobTitle: 'Senior Developer',
   name: 'Eugene Robert',
-  timezone: 'EAT-09'
+  timezone: 'EAT-09',
 };
 
 export const AccountProfile = () => (
@@ -25,7 +25,7 @@ export const AccountProfile = () => (
         sx={{
           alignItems: 'center',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
         }}
       >
         {/* <Avatar
@@ -36,32 +36,20 @@ export const AccountProfile = () => (
             width: 80
           }}
         /> */}
-        <Typography
-          gutterBottom
-          variant="h5"
-        >
+        <Typography gutterBottom variant="h5">
           {user.name}
         </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
+        <Typography color="text.secondary" variant="body2">
           {user.city} {user.country}
         </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
+        <Typography color="text.secondary" variant="body2">
           {user.timezone}
         </Typography>
       </Box>
     </CardContent>
     <Divider />
     <CardActions>
-      <Button
-        fullWidth
-        variant="text"
-      >
+      <Button fullWidth variant="text">
         Upload picture
       </Button>
     </CardActions>

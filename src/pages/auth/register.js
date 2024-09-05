@@ -16,17 +16,13 @@ const Page = () => {
     initialValues: {
       phone: '0765540913', // Initial phone number value
       password: '12345',
-      submit: null
+      submit: null,
     },
     validationSchema: Yup.object({
-      phone: Yup
-        .string()
+      phone: Yup.string()
         .matches(/^[0-9+\s()]*$/, 'Invalid phone number') // Adjust regex pattern as needed
         .required('Phone number is required'),
-      password: Yup
-        .string()
-        .max(255)
-        .required('Password is required')
+      password: Yup.string().max(255).required('Password is required'),
     }),
     onSubmit: async (values, helpers) => {
       try {
@@ -37,22 +33,20 @@ const Page = () => {
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
-    }
+    },
   });
 
   return (
     <>
       <Head>
-        <title>
-          Register
-        </title>
+        <title>Register</title>
       </Head>
       <Box
         sx={{
           flex: '1 1 auto',
           alignItems: 'center',
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }}
       >
         <Box
@@ -60,23 +54,14 @@ const Page = () => {
             maxWidth: 550,
             px: 3,
             py: '100px',
-            width: '100%'
+            width: '100%',
           }}
         >
           <div>
-            <Stack
-              spacing={1}
-              sx={{ mb: 3 }}
-            >
-              <Typography variant="h4">
-                Register
-              </Typography>
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                Already have an account?
-                &nbsp;
+            <Stack spacing={1} sx={{ mb: 3 }}>
+              <Typography variant="h4">Register</Typography>
+              <Typography color="text.secondary" variant="body2">
+                Already have an account? &nbsp;
                 <Link
                   component={NextLink}
                   href="/auth/login"
@@ -87,22 +72,19 @@ const Page = () => {
                 </Link>
               </Typography>
             </Stack>
-            <form
-              noValidate
-              onSubmit={formik.handleSubmit}
-            >
+            <form noValidate onSubmit={formik.handleSubmit}>
               <Stack spacing={3}>
-              <TextField
-          error={!!(formik.touched.phone && formik.errors.phone)}
-          fullWidth
-          helperText={formik.touched.phone && formik.errors.phone}
-          label="Phone Number"
-          name="phone"
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-          type="tel"
-          value={formik.values.phone}
-        />
+                <TextField
+                  error={!!(formik.touched.phone && formik.errors.phone)}
+                  fullWidth
+                  helperText={formik.touched.phone && formik.errors.phone}
+                  label="Phone Number"
+                  name="phone"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  type="tel"
+                  value={formik.values.phone}
+                />
                 {/* <TextField
                   error={!!(formik.touched.email && formik.errors.email)}
                   fullWidth
@@ -127,11 +109,7 @@ const Page = () => {
                 />
               </Stack>
               {formik.errors.submit && (
-                <Typography
-                  color="error"
-                  sx={{ mt: 3 }}
-                  variant="body2"
-                >
+                <Typography color="error" sx={{ mt: 3 }} variant="body2">
                   {formik.errors.submit}
                 </Typography>
               )}
@@ -152,10 +130,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page) => (
-  <AuthLayout>
-    {page}
-  </AuthLayout>
-);
+Page.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;
 
 export default Page;

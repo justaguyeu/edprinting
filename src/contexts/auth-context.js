@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { BASE_URL } from 'src/api'; // Ensure BASE_URL is defined in './api'
@@ -7,13 +13,13 @@ import { useRouter } from 'next/router'; // Import useRouter from next/router
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
-  SIGN_OUT: 'SIGN_OUT'
+  SIGN_OUT: 'SIGN_OUT',
 };
 
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
-  user: null
+  user: null,
 };
 
 const handlers = {
@@ -26,11 +32,11 @@ const handlers = {
         ? {
             isAuthenticated: true,
             isLoading: false,
-            user
+            user,
           }
         : {
-            isLoading: false
-          })
+            isLoading: false,
+          }),
     };
   },
   [HANDLERS.SIGN_IN]: (state, action) => {
@@ -39,19 +45,20 @@ const handlers = {
     return {
       ...state,
       isAuthenticated: true,
-      user
+      user,
     };
   },
   [HANDLERS.SIGN_OUT]: (state) => {
     return {
       ...state,
       isAuthenticated: false,
-      user: null
+      user: null,
     };
-  }
+  },
 };
 
-const reducer = (state, action) => (handlers[action.type] ? handlers[action.type](state, action) : state);
+const reducer = (state, action) =>
+  handlers[action.type] ? handlers[action.type](state, action) : state;
 
 export const AuthContext = createContext({ undefined });
 
@@ -71,7 +78,8 @@ export const AuthProvider = (props) => {
     let isAuthenticated = false;
 
     try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
+      isAuthenticated =
+        window.sessionStorage.getItem('authenticated') === 'true';
     } catch (err) {
       console.error(err);
     }
@@ -89,11 +97,11 @@ export const AuthProvider = (props) => {
 
       dispatch({
         type: HANDLERS.INITIALIZE,
-        payload: user
+        payload: user,
       });
     } else {
       dispatch({
-        type: HANDLERS.INITIALIZE
+        type: HANDLERS.INITIALIZE,
       });
     }
   };
@@ -102,47 +110,51 @@ export const AuthProvider = (props) => {
     initialize();
   }, []);
 
-  const signIn = async (username, password) => { 
-  
-  try {
-    const response = await axios.post(`${BASE_URL}/api/token/`, { username, password });
-    localStorage.setItem('access_token', response.data.access);
-    localStorage.setItem('refresh_token', response.data.refresh); 
+  const signIn = async (username, password) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/api/token/`, {
+        username,
+        password,
+      });
+      localStorage.setItem('access_token', response.data.access);
+      localStorage.setItem('refresh_token', response.data.refresh);
 
-    dispatch({
-            type: HANDLERS.SIGN_IN,
-          });
-    if (response.data.is_staff) {
-      router.push('/'); 
-    } else {
-      router.push('/user');
+      dispatch({
+        type: HANDLERS.SIGN_IN,
+      });
+      if (response.data.is_staff) {
+        router.push('/');
+      } else {
+        router.push('/user');
+      }
+    } catch (error) {
+      console.error(
+        'Login failed:',
+        error.response ? error.response.data : error.message,
+      );
     }
-  } catch (error) {
-    console.error('Login failed:', error.response ? error.response.data : error.message);
-  }
-};
+  };
   // const signIn = async (username, password) => {
   //   try {
   //     const response = await axios.post(`${BASE_URL}/api/token/`, { username, password });
   //     const { access, refresh, is_staff } = response.data;
-  
+
   //     // Log the response for debugging
   //     console.log('Sign-in response:', response.data);
-  
+
   //     if (!is_staff) {
   //       throw new Error('User role is missing or invalid');
   //     }
-  
+
   //     localStorage.setItem('access_token', access);
   //     localStorage.setItem('refresh_token', refresh);
   //     window.sessionStorage.setItem('authenticated', 'true');
-  
+
   //     dispatch({
   //       type: HANDLERS.SIGN_IN,
   //       payload: { is_staff }
   //     });
-  
-      
+
   //     if (is_staff) {
   //       router.push('/');
   //     } else {
@@ -153,7 +165,6 @@ export const AuthProvider = (props) => {
   //     throw new Error('Please check your username and password');
   //   }
   // };
-  
 
   const signUp = async (email, name, password) => {
     try {
@@ -171,7 +182,7 @@ export const AuthProvider = (props) => {
     window.sessionStorage.removeItem('authenticated');
 
     dispatch({
-      type: HANDLERS.SIGN_OUT
+      type: HANDLERS.SIGN_OUT,
     });
   };
 
@@ -181,7 +192,7 @@ export const AuthProvider = (props) => {
         ...state,
         signIn,
         signUp,
-        signOut
+        signOut,
       }}
     >
       {children}
@@ -190,7 +201,7 @@ export const AuthProvider = (props) => {
 };
 
 AuthProvider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export const AuthConsumer = AuthContext.Consumer;

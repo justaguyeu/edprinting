@@ -12,7 +12,7 @@ import {
   Stack,
   SvgIcon,
   Typography,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -34,18 +34,18 @@ export const SideNav = (props) => {
       sx={{
         height: '100%',
         '& .simplebar-content': {
-          height: '100%'
+          height: '100%',
         },
         '& .simplebar-scrollbar:before': {
-          background: 'neutral.40'
-        }
+          background: 'neutral.40',
+        },
       }}
     >
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          height: '100%'
+          height: '100%',
         }}
       >
         <Box sx={{ p: 3 }}>
@@ -55,7 +55,7 @@ export const SideNav = (props) => {
             sx={{
               display: 'inline-flex',
               height: 32,
-              width: 32
+              width: 32,
             }}
           >
             {/* <Logo /> */}
@@ -69,20 +69,14 @@ export const SideNav = (props) => {
               display: 'flex',
               justifyContent: 'space-between',
               mt: 2,
-              p: '12px'
+              p: '12px',
             }}
           >
             <div>
-              <Typography
-                color="neutral.40"
-                variant="subtitle1"
-              >
+              <Typography color="neutral.40" variant="subtitle1">
                 Ed Printing
               </Typography>
-              <Typography
-                color="black"
-                variant="body2"
-              >
+              <Typography color="black" variant="body2">
                 SALES DASHBOARD
               </Typography>
             </div>
@@ -100,7 +94,7 @@ export const SideNav = (props) => {
           sx={{
             flexGrow: 1,
             px: 2,
-            py: 3
+            py: 3,
           }}
         >
           <Stack
@@ -109,11 +103,11 @@ export const SideNav = (props) => {
             sx={{
               listStyle: 'none',
               p: 0,
-              m: 0
+              m: 0,
             }}
           >
             {items.map((item) => {
-              const active = item.path ? (pathname === item.path) : false;
+              const active = item.path ? pathname === item.path : false;
 
               return (
                 <div key={item.title}>
@@ -124,7 +118,9 @@ export const SideNav = (props) => {
                     icon={item.icon}
                     path={item.path}
                     title={item.title}
-                    onClick={() => item.subItems && handleToggleExpand(item.title)}
+                    onClick={() =>
+                      item.subItems && handleToggleExpand(item.title)
+                    }
                   />
                   {item.subItems && expanded[item.title] && (
                     <Stack
@@ -134,7 +130,7 @@ export const SideNav = (props) => {
                         listStyle: 'none',
                         p: 0,
                         pl: 2,
-                        m: 0
+                        m: 0,
                       }}
                     >
                       {item.subItems.map((subItem) => {
@@ -170,8 +166,8 @@ export const SideNav = (props) => {
           sx: {
             backgroundColor: 'white',
             color: 'common.white',
-            width: 280
-          }
+            width: 280,
+          },
         }}
         variant="permanent"
       >
@@ -189,8 +185,8 @@ export const SideNav = (props) => {
         sx: {
           backgroundColor: 'white',
           color: 'common.white',
-          width: 280
-        }
+          width: 280,
+        },
       }}
       sx={{ zIndex: (theme) => theme.zIndex.appBar + 100 }}
       variant="temporary"
@@ -202,5 +198,5 @@ export const SideNav = (props) => {
 
 SideNav.propTypes = {
   onClose: PropTypes.func,
-  open: PropTypes.bool
+  open: PropTypes.bool,
 };

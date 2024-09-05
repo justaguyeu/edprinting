@@ -16,7 +16,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TablePagination
+  TablePagination,
 } from '@mui/material';
 
 export const AccountProfileDetails = () => {
@@ -50,14 +50,15 @@ export const AccountProfileDetails = () => {
   useEffect(() => {
     // Fetch data from API
     fetch('your_api_endpoint')
-      .then(response => response.json())
-      .then(data => setStudents(data))
-      .catch(error => console.error('Error fetching student data:', error));
+      .then((response) => response.json())
+      .then((data) => setStudents(data))
+      .catch((error) => console.error('Error fetching student data:', error));
   }, []);
 
-  const filteredStudents = students.filter(student =>
-    student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStudents = students.filter(
+    (student) =>
+      student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.lastName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -72,9 +73,7 @@ export const AccountProfileDetails = () => {
             Register Student
           </Button>
         </Stack> */}
-        <Typography variant="h5" sx={{ m: 1.5 }}>
-          
-        </Typography>
+        <Typography variant="h5" sx={{ m: 1.5 }}></Typography>
         <CardContent sx={{ pt: 0 }}>
           <Box sx={{ m: 1.5, width: 'auto' }}>
             <TextField
@@ -98,18 +97,20 @@ export const AccountProfileDetails = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredStudents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((student, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{student.classLevel}</TableCell>
-                    <TableCell>{student.firstName}</TableCell>
-                    <TableCell>{student.middleName}</TableCell>
-                    <TableCell>{student.lastName}</TableCell>
-                    <TableCell>{student.gender}</TableCell>
-                    <TableCell>{student.Dob}</TableCell>
-                    <TableCell>{student.registrationNumber}</TableCell>
-                  </TableRow>
-                ))}
+                {filteredStudents
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((student, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{student.classLevel}</TableCell>
+                      <TableCell>{student.firstName}</TableCell>
+                      <TableCell>{student.middleName}</TableCell>
+                      <TableCell>{student.lastName}</TableCell>
+                      <TableCell>{student.gender}</TableCell>
+                      <TableCell>{student.Dob}</TableCell>
+                      <TableCell>{student.registrationNumber}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
             <TablePagination

@@ -17,7 +17,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
@@ -34,11 +34,11 @@ export const CustomersTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
   const [selectedMonth, setSelectedMonth] = useState('');
   const [stockReport, setStockReport] = useState([]);
   const [stockReport2, setStockReport2] = useState([]);
@@ -70,7 +70,10 @@ export const CustomersTable = (props) => {
             setNoDataMessage('');
           }
         } catch (error) {
-          console.error('Error fetching stock report:', error.response ? error.response.data : error.message);
+          console.error(
+            'Error fetching stock report:',
+            error.response ? error.response.data : error.message,
+          );
         } finally {
           setLoading(false);
         }
@@ -88,7 +91,9 @@ export const CustomersTable = (props) => {
       currency: 'TZS',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(numericValue).replace('TZS', 'Tsh');
+    })
+      .format(numericValue)
+      .replace('TZS', 'Tsh');
   };
 
   const getFormattedMonthYear = (month) => {
@@ -100,123 +105,82 @@ export const CustomersTable = (props) => {
     return `${monthName} ${year}`;
   };
 
-
-  
-
   return (
-    <><Card sx={{ p: 2 }}>
-      <div>
-        <label variant="h6" >Select Month:</label>
-        <input variant="h6"
-          type="month"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)} />
-      </div>
+    <>
+      <Card sx={{ p: 2 }}>
+        <div>
+          <label variant="h6">Select Month:</label>
+          <input
+            variant="h6"
+            type="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+          />
+        </div>
+      </Card>
 
-    </Card>
-
-    <CardContent>
-    <Card>
-
-
-        <Scrollbar>
-          <Box sx={{ minWidth: 800 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  
-                  <TableCell>
-                    STOCK NAME
-                  </TableCell>
-                  <TableCell>
-                    TOTAL STOCK
-                  </TableCell>
-                  <TableCell>
-                    USED STOCK
-                  </TableCell>
-                  <TableCell>
-                    REMAINED STOCK
-                  </TableCell>
-                  <TableCell>
-                    USED STOCK PRICE
-                  </TableCell>
-                  <TableCell>
-                    REMAINED STOCK PRICE
-                  </TableCell>
-                  <TableCell>
-                    TOTAL STOCK PRICE
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {stockReport.map((item) => {
-
-                  return (
-                    <TableRow
-
-                    >
-                      <TableCell>
-                        {item.item_name}
-                      </TableCell>
-                      <TableCell>
-                        {item.total_quantity}
-                      </TableCell>
-                      <TableCell>
-                        {item.quantity_used}
-                      </TableCell>
-                      <TableCell>
-                        {item.remaining_stock}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(item.total_value_used)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(item.total_value_unused)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(item.total_value_stock)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-              <TableBody>
-                {stockReport2.map((item) => {
-
-                  return (
-                    <TableRow
-
-                    >
-                      <TableCell>
-                        {item.item_name}
-                      </TableCell>
-                      <TableCell>
-                        {item.total_quantity}
-                      </TableCell>
-                      <TableCell>
-                        {item.quantity_used}
-                      </TableCell>
-                      <TableCell>
-                        {item.remaining_stock}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(item.total_value_used)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(item.total_value_unused)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(item.total_value_stock)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Box>
-          
-        </Scrollbar>
-        {/* <TablePagination
+      <CardContent>
+        <Card>
+          <Scrollbar>
+            <Box sx={{ minWidth: 800 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>STOCK NAME</TableCell>
+                    <TableCell>TOTAL STOCK</TableCell>
+                    <TableCell>USED STOCK</TableCell>
+                    <TableCell>REMAINED STOCK</TableCell>
+                    <TableCell>USED STOCK PRICE</TableCell>
+                    <TableCell>REMAINED STOCK PRICE</TableCell>
+                    <TableCell>TOTAL STOCK PRICE</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {stockReport.map((item) => {
+                    return (
+                      <TableRow>
+                        <TableCell>{item.item_name}</TableCell>
+                        <TableCell>{item.total_quantity}</TableCell>
+                        <TableCell>{item.quantity_used}</TableCell>
+                        <TableCell>{item.remaining_stock}</TableCell>
+                        <TableCell>
+                          {formatCurrency(item.total_value_used)}
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(item.total_value_unused)}
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(item.total_value_stock)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+                <TableBody>
+                  {stockReport2.map((item) => {
+                    return (
+                      <TableRow>
+                        <TableCell>{item.item_name}</TableCell>
+                        <TableCell>{item.total_quantity}</TableCell>
+                        <TableCell>{item.quantity_used}</TableCell>
+                        <TableCell>{item.remaining_stock}</TableCell>
+                        <TableCell>
+                          {formatCurrency(item.total_value_used)}
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(item.total_value_unused)}
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(item.total_value_stock)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </Box>
+          </Scrollbar>
+          {/* <TablePagination
           component="div"
           count={count}
           onPageChange={onPageChange}
@@ -224,10 +188,9 @@ export const CustomersTable = (props) => {
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]} /> */}
-      </Card>
+        </Card>
       </CardContent>
-      </>
-      
+    </>
   );
 };
 
@@ -242,5 +205,5 @@ CustomersTable.propTypes = {
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };

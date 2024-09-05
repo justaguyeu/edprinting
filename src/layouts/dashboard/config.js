@@ -17,14 +17,14 @@ export const items = [
       <SvgIcon fontSize="small">
         <ChartBarIcon />
       </SvgIcon>
-    )
+    ),
   },
   {
     title: 'Sales',
     // path: '/customers',
     icon: (
       <SvgIcon fontSize="small">
-        <CurrencyDollarIcon/>
+        <CurrencyDollarIcon />
       </SvgIcon>
     ),
     subItems: [
@@ -35,7 +35,7 @@ export const items = [
           <SvgIcon fontSize="small">
             <CurrencyDollarIcon />
           </SvgIcon>
-        )
+        ),
       },
       {
         title: 'Weekly Report',
@@ -44,7 +44,7 @@ export const items = [
           <SvgIcon fontSize="small">
             <CurrencyDollarIcon />
           </SvgIcon>
-        )
+        ),
       },
       {
         title: 'Monthly Report',
@@ -53,12 +53,10 @@ export const items = [
           <SvgIcon fontSize="small">
             <CurrencyDollarIcon />
           </SvgIcon>
-        )
-      }
-    ]
-    
+        ),
+      },
+    ],
   },
-
 
   {
     title: 'Stock',
@@ -76,7 +74,7 @@ export const items = [
           <SvgIcon fontSize="small">
             <ShoppingBagIcon />
           </SvgIcon>
-        )
+        ),
       },
       {
         title: 'Stock View',
@@ -85,7 +83,7 @@ export const items = [
           <SvgIcon fontSize="small">
             <ShoppingBagIcon />
           </SvgIcon>
-        )
+        ),
       },
       {
         title: 'Add Stock',
@@ -94,7 +92,7 @@ export const items = [
           <SvgIcon fontSize="small">
             <ShoppingBagIcon />
           </SvgIcon>
-        )
+        ),
       },
       {
         title: 'Restock',
@@ -103,9 +101,9 @@ export const items = [
           <SvgIcon fontSize="small">
             <ShoppingBagIcon />
           </SvgIcon>
-        )
-      }
-    ]
+        ),
+      },
+    ],
   },
   // {
   //   title: 'Students',
@@ -135,13 +133,13 @@ export const items = [
   //   )
   // },
   {
-  title: 'Settings',
+    title: 'Settings',
     path: '/settings',
     icon: (
       <SvgIcon fontSize="small">
         <CogIcon />
       </SvgIcon>
-    )
+    ),
   },
 
   // {
@@ -171,7 +169,7 @@ export const items = [
   //       )
   //     }
   //   ]
-  // },  
+  // },
   // {
   //   title: 'Login',
   //   path: '/auth/login',

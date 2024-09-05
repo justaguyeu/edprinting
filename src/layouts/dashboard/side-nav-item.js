@@ -91,7 +91,6 @@
 //   title: PropTypes.string.isRequired
 // };
 
-
 import NextLink from 'next/link';
 import PropTypes from 'prop-types';
 import { Box, ButtonBase, ListItem } from '@mui/material';
@@ -130,7 +129,6 @@ export const SideNavItem = (props) => {
         disableRipple
         onClick={handleClick}
         sx={{
-          
           alignItems: 'center',
           borderRadius: 1,
           display: 'flex',
@@ -142,7 +140,7 @@ export const SideNavItem = (props) => {
           textTransform: 'none',
           width: '100%',
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.08)'
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
           },
           ...(active && {
             backgroundColor: 'rgba(255, 255, 255, 0.04)',
@@ -163,8 +161,9 @@ export const SideNavItem = (props) => {
               justifyContent: 'center',
               mr: 2,
               ...(active && {
-                color: 'neutral.40'
-            })}}
+                color: 'neutral.40',
+              }),
+            }}
           >
             {icon}
           </Box>
@@ -182,8 +181,9 @@ export const SideNavItem = (props) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             ...(active && {
-              color: 'neutral.40'
-          })}}
+              color: 'neutral.40',
+            }),
+          }}
         >
           <span>{title}</span>
         </Box>

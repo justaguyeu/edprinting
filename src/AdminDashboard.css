@@ -23,8 +23,8 @@
 }
 
 .logo {
-width: 20%;
-height: auto;
+  width: 20%;
+  height: auto;
 }
 
 .content-container {
@@ -44,7 +44,7 @@ label {
   margin-right: 10px;
 }
 
-input[type="date"] {
+input[type='date'] {
   border-radius: 4px;
   margin: 10px 0;
   padding: 12px;
@@ -60,12 +60,12 @@ input[type="date"] {
   margin-bottom: 60px;
 }
 
-
 .admin-table thead {
   background-color: #f4f4f4;
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
   padding: 12px;
   border: 1px solid #ddd;
   text-align: left;
@@ -75,7 +75,7 @@ input[type="date"] {
   background-color: #ff0000;
   color: #fff;
 }
-.success-message{
+.success-message {
   /* background-color: #ff0000; */
   color: #ff0000;
   text-align: center;
@@ -149,24 +149,22 @@ input[type="date"] {
   background-color: #cc0000;
 }
 
-
 @media (max-width: 768px) {
   .logo {
     width: 70%;
     height: auto;
   }
-  
+
   /* Ensure the table wrapper allows for horizontal scrolling */
   .table-wrapper {
     overflow-x: auto;
   }
-  
+
   /* Keep the table structure intact on small screens */
   .admin-table {
     min-width: 600px; /* Ensure table has a minimum width */
   }
 }
-
 
 /* @media (max-width: 768px) {
   .admin-table th, .admin-table td {
@@ -210,7 +208,7 @@ input[type="date"] {
   padding: 20px;
 }
 
-.logo-container4{
+.logo-container4 {
   grid-column: 1 / span 2; /* Logo spans across both columns */
   text-align: center;
 }
@@ -226,13 +224,11 @@ input[type="date"] {
   border: 1px solid #ccc;
   border-radius: 8px;
 }
-select-month{
-margin-top: 90px;
-display: flex;
-justify-content: center;
+select-month {
+  margin-top: 90px;
+  display: flex;
+  justify-content: center;
 }
-
-
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -248,8 +244,6 @@ justify-content: center;
     margin-bottom: 20px; /* Space between stacked forms */
   }
 }
-
-
 
 input,
 select,
