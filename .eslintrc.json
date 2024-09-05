@@ -4,6 +4,7 @@
     "eslint:recommended",
     "plugin:react/recommended"
   ],
+  "plugins": ["prettier"],
   "rules": {
     "@next/next/no-img-element": "off",
     "prettier/prettier": "error",
