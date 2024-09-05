@@ -1,8 +1,21 @@
 {
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/404": "pages/404.js",
+  "/account": "pages/account.js",
+  "/auth/login": "pages/auth/login.js",
+  "/auth/register": "pages/auth/register.js",
+  "/companies": "pages/companies.js",
+  "/customers": "pages/customers.js",
+  "/": "pages/index.js",
+  "/salesmonthly": "pages/salesmonthly.js",
+  "/salesdaily": "pages/salesdaily.js",
+  "/salesweekly": "pages/salesweekly.js",
+  "/settings": "pages/settings.js",
+  "/stockadd": "pages/stockadd.js",
   "/stockreport": "pages/stockreport.js",
+  "/stockrestock": "pages/stockrestock.js",
+  "/stockview": "pages/stockview.js",
   "/user": "pages/user.js",
-  "/auth/login": "pages/auth/login.js"
+  "/_error": "pages/_error.js"
 }
