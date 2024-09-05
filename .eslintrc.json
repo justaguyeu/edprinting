@@ -16,5 +16,9 @@
         "maximum": 1
       }
     ]
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
   }
 }
