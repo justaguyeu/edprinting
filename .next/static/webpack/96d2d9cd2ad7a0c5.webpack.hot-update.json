@@ -1,1 +1,20 @@
-{"c":["pages/_app","pages/stockadd","webpack"],"r":["pages/salesmonthly"],"m":["./node_modules/@mui/material/InputAdornment/InputAdornment.js","./node_modules/@mui/material/InputAdornment/index.js","./node_modules/@mui/material/InputAdornment/inputAdornmentClasses.js","./node_modules/date-fns/esm/subDays/index.js","./node_modules/date-fns/esm/subHours/index.js","./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=D%3A%5Cmaterial-kit-react%5Csrc%5Cpages%5Csalesmonthly.js&page=%2Fsalesmonthly!","./src/hooks/use-selection.js","./src/pages/salesmonthly.js","./src/sections/customer/customers-search.js","./src/sections/salesmonthly/customers-table.js","./src/utils/apply-pagination.js","__barrel_optimize__?names=Box,Button,Container,Stack,SvgIcon,Typography!=!./node_modules/@mui/material/index.js","__barrel_optimize__?names=Card,InputAdornment,OutlinedInput,SvgIcon!=!./node_modules/@mui/material/index.js","__barrel_optimize__?names=subDays,subHours!=!./node_modules/date-fns/esm/index.js"]}
+{
+  "c": ["pages/_app", "pages/stockadd", "webpack"],
+  "r": ["pages/salesmonthly"],
+  "m": [
+    "./node_modules/@mui/material/InputAdornment/InputAdornment.js",
+    "./node_modules/@mui/material/InputAdornment/index.js",
+    "./node_modules/@mui/material/InputAdornment/inputAdornmentClasses.js",
+    "./node_modules/date-fns/esm/subDays/index.js",
+    "./node_modules/date-fns/esm/subHours/index.js",
+    "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=D%3A%5Cmaterial-kit-react%5Csrc%5Cpages%5Csalesmonthly.js&page=%2Fsalesmonthly!",
+    "./src/hooks/use-selection.js",
+    "./src/pages/salesmonthly.js",
+    "./src/sections/customer/customers-search.js",
+    "./src/sections/salesmonthly/customers-table.js",
+    "./src/utils/apply-pagination.js",
+    "__barrel_optimize__?names=Box,Button,Container,Stack,SvgIcon,Typography!=!./node_modules/@mui/material/index.js",
+    "__barrel_optimize__?names=Card,InputAdornment,OutlinedInput,SvgIcon!=!./node_modules/@mui/material/index.js",
+    "__barrel_optimize__?names=subDays,subHours!=!./node_modules/date-fns/esm/index.js"
+  ]
+}

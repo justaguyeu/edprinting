@@ -16,7 +16,12 @@ export const Layout = (props) => {
         flex: '1 1 auto',
       }}
     >
-      <Grid container sx={{ flex: '1 1 auto' }}>
+      <Grid
+        container
+        sx={{
+          flex: '1 1 auto',
+        }}
+      >
         <Grid
           xs={12}
           lg={6}

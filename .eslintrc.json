@@ -1,7 +1,12 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
   "rules": {
     "@next/next/no-img-element": "off",
+    "prettier/prettier": "error",
     "jsx-a11y/alt-text": "off",
     "react/display-name": "off",
     "react/jsx-max-props-per-line": [

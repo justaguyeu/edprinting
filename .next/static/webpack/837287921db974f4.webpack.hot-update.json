@@ -1,0 +1,18 @@
+{
+  "c": [
+    "pages/stockview",
+    "pages/stockreport",
+    "pages/salesmonthly",
+    "pages/user",
+    "webpack"
+  ],
+  "r": ["pages/stockview", "pages/salesmonthly"],
+  "m": [
+    "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=D%3A%5Cmaterial-kit-react%5Csrc%5Cpages%5Cstockview.js&page=%2Fstockview!",
+    "./src/pages/stockview.js",
+    "./src/sections/stockview/customers-table.js",
+    "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=D%3A%5Cmaterial-kit-react%5Csrc%5Cpages%5Csalesmonthly.js&page=%2Fsalesmonthly!",
+    "./src/pages/salesmonthly.js",
+    "./src/sections/salesmonthly/customers-table.js"
+  ]
+}
