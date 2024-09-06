@@ -80,9 +80,14 @@ export const TopNav = (props) => {
             </Tooltip> */}
             <Tooltip title="Notifications">
               <IconButton>
-                <Badge badgeContent={4} color="success" variant="dot">
+                <Badge badgeContent={4} color="success" variant="dot"
+                sx={{
+                  color: 'error.main',
+                 
+                }}
+                >
                   <SvgIcon fontSize="small">
-                    <BellIcon />
+                    <BellIcon/>
                   </SvgIcon>
                 </Badge>
               </IconButton>
