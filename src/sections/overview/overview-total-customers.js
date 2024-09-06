@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import ArrowDownIcon from '@heroicons/react/24/solid/ArrowDownIcon';
 import ArrowUpIcon from '@heroicons/react/24/solid/ArrowUpIcon';
-import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
+import CurrencyDollarIcon from '@heroicons/react/24/solid/CurrencyDollarIcon';
 import {
   Avatar,
   Card,
@@ -34,7 +34,7 @@ export const OverviewTotalCustomers = (props) => {
                 }}
               >
                 <SvgIcon>
-                  <UsersIcon />
+                  <CurrencyDollarIcon />
                 </SvgIcon>
               </Avatar>
             </Typography>

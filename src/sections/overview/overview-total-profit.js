@@ -26,7 +26,7 @@ export const OverviewTotalProfit = (props) => {
               Weekly Profit
               <Avatar
                 sx={{
-                  backgroundColor: 'primary.main',
+                  backgroundColor: 'info.main',
                   height: 56,
                   width: 56,
                 }}
