@@ -1,13 +1,7 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
-  "plugins": ["prettier"],
+  "extends": "next/core-web-vitals",
   "rules": {
     "@next/next/no-img-element": "off",
-    "prettier/prettier": "error",
     "jsx-a11y/alt-text": "off",
     "react/display-name": "off",
     "react/jsx-max-props-per-line": [
@@ -16,9 +10,5 @@
         "maximum": 1
       }
     ]
-  },
-  "parserOptions": {
-    "ecmaVersion": 2020,
-    "sourceType": "module"
   }
 }

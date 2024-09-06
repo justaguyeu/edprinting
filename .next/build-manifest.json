@@ -27,10 +27,20 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/salesdaily": [
+    "/salesmonthly": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/salesdaily.js"
+      "static/chunks/pages/salesmonthly.js"
+    ],
+    "/salesweekly": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/salesweekly.js"
+    ],
+    "/stockrestock": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/stockrestock.js"
     ]
   },
   "ampFirstPages": []
