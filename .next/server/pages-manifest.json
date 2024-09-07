@@ -4,5 +4,6 @@
   "/_document": "pages/_document.js",
   "/stockadd": "pages/stockadd.js",
   "/stockview": "pages/stockview.js",
-  "/stockreport": "pages/stockreport.js"
+  "/stockreport": "pages/stockreport.js",
+  "/auth/login": "pages/auth/login.js"
 }
