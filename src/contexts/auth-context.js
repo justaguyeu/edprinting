@@ -4,11 +4,12 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState
 } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { BASE_URL } from 'src/api'; // Ensure BASE_URL is defined in './api'
-import { useRouter } from 'next/router'; // Import useRouter from next/router
+import { useRouter } from 'next/router';// Import useRouter from next/router
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -66,7 +67,8 @@ export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
+  const [successMessage, setSuccessMessage] = useState(''); // Initialize useRouter
 
   const initialize = async () => {
     if (initialized.current) {
@@ -109,6 +111,15 @@ export const AuthProvider = (props) => {
   useEffect(() => {
     initialize();
   }, []);
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000); // Clear message after 5 seconds
+
+      return () => clearTimeout(timer); // Clear timeout if the component unmounts
+    }
+  }, [successMessage]);
 
   const signIn = async (username, password) => {
     try {
@@ -122,17 +133,22 @@ export const AuthProvider = (props) => {
       dispatch({
         type: HANDLERS.SIGN_IN,
       });
+      
       if (response.data.is_staff) {
         router.push('/');
       } else {
         router.push('/user');
       }
+      setSuccessMessage(response.data.message);
+      return response;
     } catch (error) {
       console.error(
         'Login failed:',
         error.response ? error.response.data : error.message,
       );
+      
     }
+    
   };
   // const signIn = async (username, password) => {
   //   try {

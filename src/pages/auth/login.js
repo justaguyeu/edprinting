@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Link, Stack, TextField, Typography,CircularProgress  } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 
@@ -109,11 +109,25 @@ const Page = () => {
                 size="large"
                 sx={{
                   mt: 3,
+                  position: 'relative', // Needed for positioning the spinner
                 }}
                 type="submit"
                 variant="contained"
+                disabled={formik.isSubmitting}
               >
-                Login
+                {formik.isSubmitting && (
+                  <CircularProgress
+                    size={24}
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      marginTop: '-12px',
+                      marginLeft: '-12px',
+                    }}
+                  />
+                )}
+                {formik.isSubmitting ? 'Logging in...' : 'Login'}
               </Button>
             </form>
           </div>
