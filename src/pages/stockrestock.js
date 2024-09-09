@@ -16,6 +16,7 @@ import {
   Stack,
   SvgIcon,
   Typography,
+  CircularProgress,
   Unstable_Grid2 as Grid,
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
@@ -30,12 +31,14 @@ const Page = () => {
     item_name: '',
     quantity: '',
   });
-
   const [formData2, setFormData2] = useState({
     date: '',
     item_name: '',
     area_in_square_meters: '',
   });
+
+  const [loadingStock, setLoadingStock] = useState(false);
+  const [loadingStock2, setLoadingStock2] = useState(false);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -132,6 +135,7 @@ const Page = () => {
     e.preventDefault();
     const token = localStorage.getItem('access_token');
     if (token) {
+      setLoadingStock(true);
       try {
         const response = await axios.post(`${BASE_URL}/api/stock/`, formData, {
           headers: { Authorization: `Bearer ${token}` },
@@ -145,15 +149,19 @@ const Page = () => {
           'Data submission failed:',
           error.response ? error.response.data : error.message,
         );
+      } finally {
+        setLoadingStock(false);
       }
     } else {
       console.error('No token found');
     }
   };
+
   const handleSubmit2 = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('access_token');
     if (token) {
+      setLoadingStock2(true);
       try {
         const response = await axios.post(
           `${BASE_URL}/api/stock2/`,
@@ -171,6 +179,8 @@ const Page = () => {
           'Data submission failed:',
           error.response ? error.response.data : error.message,
         );
+      } finally {
+        setLoadingStock2(false);
       }
     } else {
       console.error('No token found');
@@ -214,7 +224,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Restock </title>
+        <title>Restock</title>
       </Head>
       <Box
         component="main"
@@ -262,14 +272,13 @@ const Page = () => {
                       </select>
                       <TextField
                         fullWidth
-                        label=" Quantity"
+                        label="Quantity"
                         type="number"
                         name="quantity"
                         value={formData.quantity}
                         onChange={handleChange}
                         required
                       />
-
                       <input
                         type="date"
                         name="date"
@@ -277,15 +286,34 @@ const Page = () => {
                         onChange={handleChange}
                         required
                       />
-                      <Button variant="contained" type="submit">
-                        RESTOCK
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        disabled={loadingStock}
+                        sx={{
+                          position: 'relative',
+                        }}
+                      >
+                        {loadingStock && (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              marginTop: '-12px',
+                              marginLeft: '-12px',
+                            }}
+                          />
+                        )}
+                        {loadingStock ? 'Restocking...' : 'RESTOCK'}
                       </Button>
-                    </Stack>{' '}
-                  </CardContent>{' '}
+                    </Stack>
+                  </CardContent>
                 </form>
 
                 <form onSubmit={handleSubmit2}>
-                  <h3>ADD STOCK(BANNER & STICKER)</h3>
+                  <h3>ADD STOCK (BANNER & STICKER)</h3>
                   <CardContent>
                     <Stack spacing={3} sx={{ maxWidth: 400 }}>
                       <select
@@ -317,10 +345,29 @@ const Page = () => {
                         onChange={handleChange2}
                         required
                       />
-                      <Button variant="contained" type="submit">
-                        RESTOCK
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        disabled={loadingStock2}
+                        sx={{
+                          position: 'relative',
+                        }}
+                      >
+                        {loadingStock2 && (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              marginTop: '-12px',
+                              marginLeft: '-12px',
+                            }}
+                          />
+                        )}
+                        {loadingStock2 ? 'Restocking...' : 'RESTOCK'}
                       </Button>
-                    </Stack>{' '}
+                    </Stack>
                   </CardContent>
                 </form>
               </div>

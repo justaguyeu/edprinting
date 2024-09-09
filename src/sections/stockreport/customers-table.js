@@ -118,6 +118,13 @@ export const CustomersTable = (props) => {
           />
         </div>
       </Card>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          { selectedMonth ? (
+            stockReport.length > 0 ||
+            stockReport2.length > 0 ? (
 
       <CardContent>
         <Card>
@@ -190,6 +197,14 @@ export const CustomersTable = (props) => {
           rowsPerPageOptions={[5, 10, 25]} /> */}
         </Card>
       </CardContent>
+    ) : (
+            <p>No data available for the selected month .</p>
+          )
+          ) : (
+          <p>Please select  month  to view the data.</p>
+          )}
+        </div>
+      )}
     </>
   );
 };

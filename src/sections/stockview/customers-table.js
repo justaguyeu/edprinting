@@ -121,6 +121,12 @@ export const CustomersTable = (props) => {
 
   return (
     <>
+    {loading ? (
+        <p>Loading Stock...</p>
+      ) : (
+        <div>
+          { 
+            allStock.length > 0 ? (
       <CardContent>
         <Card>
           <Scrollbar>
@@ -159,6 +165,12 @@ export const CustomersTable = (props) => {
           rowsPerPageOptions={[5, 10, 25]} /> */}
         </Card>
       </CardContent>
+      ) : (
+        <p>No data available for the selected month .</p>
+      
+      )}
+    </div>
+  )}
     </>
   );
 };

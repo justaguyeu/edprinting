@@ -130,7 +130,8 @@ export const CustomersTable = (props) => {
         <p>Loading...</p>
       ) : (
         <div>
-          {dailyTotals.length > 0 ? (
+          { month ? (
+            dailyTotals.length > 0 ? (
             <>
               <CardContent>
                 <Card>
@@ -221,7 +222,10 @@ export const CustomersTable = (props) => {
               </CardContent>
             </>
           ) : (
-            <p>No data available for the selected month.</p>
+            <p>No data available for the selected month .</p>
+          )
+          ) : (
+          <p>Please select  month  to view the data.</p>
           )}
         </div>
       )}

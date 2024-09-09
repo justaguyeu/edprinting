@@ -7,6 +7,7 @@ import {
   Button,
   Stack,
   TextField,
+  CircularProgress,
   Unstable_Grid2 as Grid,
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/userlayout';
@@ -56,6 +57,9 @@ const Page = () => {
     total_price: '',
     discount_price: '',
   });
+  const [loadingSales, setLoadingSales] = useState(false);
+  const [loadingBannerSticker, setLoadingBannerSticker] = useState(false);
+  const [loadingExpenses, setLoadingExpenses] = useState(false);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -228,6 +232,7 @@ const Page = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoadingSales(true);
     const token = localStorage.getItem('access_token');
     if (token) {
       try {
@@ -256,6 +261,8 @@ const Page = () => {
             error.response ? error.response.data : error.message,
           );
         }
+      } finally {
+        setLoadingSales(false);
       }
     } else {
       console.error('No token found');
@@ -264,6 +271,7 @@ const Page = () => {
 
   const handleSubmit2 = async (e) => {
     e.preventDefault();
+    setLoadingBannerSticker(true);
     const token = localStorage.getItem('access_token');
     if (token) {
       try {
@@ -286,6 +294,8 @@ const Page = () => {
           'Data submission failed:',
           error.response ? error.response.data : error.message,
         );
+      } finally {
+        setLoadingBannerSticker(false);
       }
     } else {
       console.error('No token found');
@@ -293,6 +303,7 @@ const Page = () => {
   };
   const handleSubmit3 = async (e) => {
     e.preventDefault();
+    setLoadingExpenses(true);
     const token = localStorage.getItem('access_token');
     if (token) {
       try {
@@ -310,7 +321,11 @@ const Page = () => {
           'Data submission failed:',
           error.response ? error.response.data : error.message,
         );
+      } finally {
+        setLoadingExpenses(false);
+      
       }
+      
     } else {
       console.error('No token found');
     }
@@ -350,54 +365,7 @@ const Page = () => {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('access_token'); // Retrieve the token here
-
-      if (token) {
-        try {
-          setLoading(true);
-
-          const response = await axios.get(`${BASE_URL}/data/yearly/`, {
-            headers: { Authorization: `Bearer ${token}` }, // Use the token in the headers
-            params: { year: '2024' },
-          });
-
-          if (response.status === 200) {
-            setLoading(true);
-            const { daily_totals } = response.data;
-
-            // Process the data for the chart
-            const monthlySalesData = Array(12).fill(0);
-            daily_totals.forEach((item) => {
-              const month = new Date(item.date).getMonth();
-              monthlySalesData[month] += item.total_sales;
-            });
-
-            setChartSeries([{ name: 'Sales', data: monthlySalesData }]);
-            setLoading(true);
-          } else {
-            console.error(`Unexpected response status: ${response.status}`);
-          }
-        } catch (error) {
-          console.error(
-            'Error fetching data:',
-            error.response ? error.response.data : error.message,
-          );
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        console.error('No token found');
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+ 
   const formatCurrency = (value) => {
     const numericValue = Number(value) || 0;
     return new Intl.NumberFormat('en-US', {
@@ -484,9 +452,31 @@ const Page = () => {
                           readOnly
                         />
 
-                        <Button variant="contained" type="submit">
+                        {/* <Button variant="contained" type="submit">
                           Submit
-                        </Button>
+                        </Button> */}
+                        <Button
+                        variant="contained"
+                        type="submit"
+                        disabled={loadingSales}
+                        sx={{
+                          position: 'relative',
+                        }}
+                      >
+                        {loadingSales && (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              marginTop: '-12px',
+                              marginLeft: '-12px',
+                            }}
+                          />
+                        )}
+                        {loadingSales ? 'Adding...' : 'Submit'}
+                      </Button>
                       </Stack>
                     </CardContent>
                   </form>
@@ -540,9 +530,31 @@ const Page = () => {
                           readOnly
                         />
 
-                        <Button variant="contained" type="submit">
+                        {/* <Button variant="contained" type="submit">
                           Submit
-                        </Button>
+                        </Button> */}
+                        <Button
+                        variant="contained"
+                        type="submit"
+                        disabled={loadingBannerSticker}
+                        sx={{
+                          position: 'relative',
+                        }}
+                      >
+                        {loadingBannerSticker && (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              marginTop: '-12px',
+                              marginLeft: '-12px',
+                            }}
+                          />
+                        )}
+                        {loadingBannerSticker ? 'Adding...' : 'Submit'}
+                      </Button>
                       </Stack>
                     </CardContent>
                   </form>
@@ -576,9 +588,31 @@ const Page = () => {
                           onChange={handleChange3}
                           required
                         />
-                        <Button variant="contained" type="submit">
+                        {/* <Button variant="contained" type="submit">
                           Submit
-                        </Button>
+                        </Button> */}
+                        <Button
+                        variant="contained"
+                        type="submit"
+                        disabled={loadingExpenses}
+                        sx={{
+                          position: 'relative',
+                        }}
+                      >
+                        {loadingExpenses && (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              marginTop: '-12px',
+                              marginLeft: '-12px',
+                            }}
+                          />
+                        )}
+                        {loadingExpenses ? 'Adding...' : 'Submit'}
+                      </Button>
                       </Stack>
                     </CardContent>
                   </form>

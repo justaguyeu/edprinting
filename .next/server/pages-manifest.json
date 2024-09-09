@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/stockadd": "pages/stockadd.js",
   "/stockview": "pages/stockview.js",
-  "/stockreport": "pages/stockreport.js",
-  "/auth/login": "pages/auth/login.js"
+  "/salesweekly": "pages/salesweekly.js",
+  "/user": "pages/user.js"
 }

@@ -1,8 +1,5 @@
 import Head from 'next/head';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import React, { useState, useEffect } from 'react';
-import { CustomersTable } from 'src/sections/stockadd/customers-table';
 import axios from 'axios';
 import { BASE_URL } from '../api';
 
@@ -14,11 +11,12 @@ import {
   CardContent,
   TextField,
   Stack,
-  SvgIcon,
   Typography,
+  CircularProgress,
   Unstable_Grid2 as Grid,
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
+import { CustomersTable } from 'src/sections/stockadd/customers-table';
 
 const Page = () => {
   const [stockItems, setStockItems] = useState([]);
@@ -35,7 +33,8 @@ const Page = () => {
     price_per_square_meter: '',
     added_date: '',
   });
-  const [loading, setLoading] = useState(false);
+  const [loadingStock, setLoadingStock] = useState(false);
+  const [loadingStock2, setLoadingStock2] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [noStockMessage, setNoStockMessage] = useState('');
 
@@ -50,7 +49,7 @@ const Page = () => {
       const token = localStorage.getItem('access_token');
       if (token) {
         try {
-          setLoading(true);
+          setLoadingStock(true);
           const response = await axios.get(`${BASE_URL}/api/stock/`, {
             headers: { Authorization: `Bearer ${token}` },
             params: { month: selectedMonth },
@@ -63,13 +62,14 @@ const Page = () => {
             setStockItems(response.data);
             setNoStockMessage('');
           }
-          setLoading(false);
         } catch (error) {
           console.error(
             'Error fetching stock data:',
             error.response ? error.response.data : error.message,
           );
-          setLoading(false);
+          setNoStockMessage('Error fetching stock data.');
+        } finally {
+          setLoadingStock(false);
         }
       }
     };
@@ -88,7 +88,7 @@ const Page = () => {
       const token = localStorage.getItem('access_token');
       if (token) {
         try {
-          setLoading(true);
+          setLoadingStock2(true);
           const response = await axios.get(`${BASE_URL}/api/stock2/`, {
             headers: { Authorization: `Bearer ${token}` },
             params: { month: selectedMonth },
@@ -102,13 +102,14 @@ const Page = () => {
             setStockItemss(response.data);
             setNoStockMessage('');
           }
-          setLoading(false);
         } catch (error) {
           console.error(
             'Error fetching stock data:',
             error.response ? error.response.data : error.message,
           );
-          setLoading(false);
+          setNoStockMessage('Error fetching stock data.');
+        } finally {
+          setLoadingStock2(false);
         }
       }
     };
@@ -120,6 +121,7 @@ const Page = () => {
     e.preventDefault();
     const token = localStorage.getItem('access_token');
     if (token) {
+      setLoadingStock(true); // Set loading to true when starting the operation
       try {
         await axios.post(`${BASE_URL}/api/stocka/`, newStock, {
           headers: { Authorization: `Bearer ${token}` },
@@ -149,13 +151,17 @@ const Page = () => {
           'Error adding stock:',
           error.response ? error.response.data : error.message,
         );
+      } finally {
+        setLoadingStock(false); // Ensure loading is set to false after operation
       }
     }
   };
+
   const handleAddStock2 = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('access_token');
     if (token) {
+      setLoadingStock2(true);
       try {
         await axios.post(`${BASE_URL}/api/stock2a/`, newStocks, {
           headers: { Authorization: `Bearer ${token}` },
@@ -185,6 +191,8 @@ const Page = () => {
           'Error adding stock:',
           error.response ? error.response.data : error.message,
         );
+      } finally {
+        setLoadingStock2(false); // Ensure loading is set to false after operation
       }
     }
   };
@@ -294,15 +302,37 @@ const Page = () => {
                           }
                           required
                         />
-                        <Button variant="contained" type="submit">
-                          Add Stock
+                        <Button
+                          fullWidth
+                          size="large"
+                          sx={{
+                            mt: 3,
+                            position: 'relative',
+                          }}
+                          type="submit"
+                          variant="contained"
+                          disabled={loadingStock}
+                        >
+                          {loadingStock && (
+                            <CircularProgress
+                              size={24}
+                              sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-12px',
+                                marginLeft: '-12px',
+                              }}
+                            />
+                          )}
+                          {loadingStock ? 'Adding...' : 'Add Stock'}
                         </Button>
-                      </Stack>{' '}
-                    </CardContent>{' '}
+                      </Stack>
+                    </CardContent>
                   </form>
 
                   <form onSubmit={handleAddStock2}>
-                    <h3>ADD STOCK(BANNER & STICKER)</h3>
+                    <h3>ADD STOCK (BANNER & STICKER)</h3>
                     <CardContent>
                       <Stack spacing={3} sx={{ maxWidth: 400 }}>
                         <TextField
@@ -355,10 +385,32 @@ const Page = () => {
                           }
                           required
                         />
-                        <Button variant="contained" type="submit">
-                          Add Stock
+                        <Button
+                          fullWidth
+                          size="large"
+                          sx={{
+                            mt: 3,
+                            position: 'relative',
+                          }}
+                          type="submit"
+                          variant="contained"
+                          disabled={loadingStock2}
+                        >
+                          {loadingStock2 && (
+                            <CircularProgress
+                              size={24}
+                              sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-12px',
+                                marginLeft: '-12px',
+                              }}
+                            />
+                          )}
+                          {loadingStock2 ? 'Adding...' : 'Add Stock (Banner & Sticker)'}
                         </Button>
-                      </Stack>{' '}
+                      </Stack>
                     </CardContent>
                   </form>
                 </div>

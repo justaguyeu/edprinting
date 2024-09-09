@@ -15,6 +15,32 @@ import axios from 'axios';
 import { BASE_URL } from '../api';
 
 const now = new Date();
+const refreshToken = async () => {
+  const refreshToken = localStorage.getItem('refresh_token');
+  try {
+    const response = await axios.post(`${BASE_URL}/api/token/refresh/`, {
+      refresh: refreshToken
+    });
+    localStorage.setItem('access_token', response.data.access);
+  } catch (error) {
+    console.error('Token refresh failed:', error.response ? error.response.data : error.message);
+  }
+};
+
+axios.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      await refreshToken();
+      const newToken = localStorage.getItem('access_token');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+      return axios(originalRequest);
+    }
+    return Promise.reject(error);
+  }
+);
 
 const Page = () => {
   const [weeklyTotals, setWeeklyTotals] = useState({});
