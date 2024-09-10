@@ -1,6 +1,8 @@
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
+import { useRouter } from 'next/router';
 import {
   Box,
   Button,
@@ -8,7 +10,6 @@ import {
   CardActions,
   CardHeader,
   Divider,
-  SvgIcon,
   Table,
   TableBody,
   TableCell,
@@ -17,42 +18,73 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { SeverityPill } from 'src/components/severity-pill';
+import axios from 'axios';  // Ensure axios is imported
+import { BASE_URL } from '../../api';  // Ensure BASE_URL is imported
 
 const statusMap = {
   pending: 'warning',
-  delivered: 'success',
-  refunded: 'error',
+  paid: 'success',
 };
 
+
+
 export const OverviewLatestOrders = (props) => {
-  const { orders = [], sx } = props;
+  const { sx } = props;
+  const [debts, setDebts] = useState([]);
+  const router = useRouter();
+  
+const handleClick = () => {
+  router.push('/all-debts');  // Navigate to the specified path
+};
+  useEffect(() => {
+    const fetchEntries = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const response = await axios.get(`${BASE_URL}/debts/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setDebts(response.data);
+        } catch (error) {
+          console.error(
+            'Error fetching data:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+    fetchEntries();
+  }, []);
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Currently Debts" />
-      <Scrollbar sx={{ flexGrow: 1 }}>
+      <CardHeader title="Current Debts" />
+      <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>Stock Name</TableCell>
                 <TableCell>Customer Name</TableCell>
-                <TableCell sortDirection="desc">Date</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Date</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => {
-                const createdAt = format(order.createdAt, 'dd/MM/yyyy');
-
+            {debts.slice(0, 5).map((debt) => {
+                const createdAt = format(new Date(debt.date), 'dd/MM/yyyy');
                 return (
-                  <TableRow hover key={order.id}>
-                    <TableCell>{order.ref}</TableCell>
-                    <TableCell>{order.customer.name}</TableCell>
+                  <TableRow hover key={debt.id}>
+                    <TableCell>{debt.stock_name}</TableCell>
+                    <TableCell>{debt.debtor_name}</TableCell>
+                    <TableCell>{debt.amount}</TableCell>
                     <TableCell>{createdAt}</TableCell>
                     <TableCell>
-                      <SeverityPill color={statusMap[order.status]}>
-                        {order.status}
+                      <SeverityPill color={statusMap[debt.status]}>
+                        {debt.status}
                       </SeverityPill>
                     </TableCell>
                   </TableRow>
@@ -66,13 +98,10 @@ export const OverviewLatestOrders = (props) => {
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button
           color="inherit"
-          endIcon={
-            <SvgIcon fontSize="small">
-              <ArrowRightIcon />
-            </SvgIcon>
-          }
+          endIcon={<ArrowRightIcon />}
           size="small"
           variant="text"
+          onClick={handleClick}
         >
           View all
         </Button>
@@ -81,7 +110,6 @@ export const OverviewLatestOrders = (props) => {
   );
 };
 
-OverviewLatestOrders.prototype = {
-  orders: PropTypes.array,
+OverviewLatestOrders.propTypes = {
   sx: PropTypes.object,
 };

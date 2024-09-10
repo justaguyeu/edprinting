@@ -20,6 +20,15 @@ export const items = [
     ),
   },
 
+  {
+    title: 'Debts Forms',
+    path: '/debts',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CurrencyDollarIcon />
+      </SvgIcon>
+    ),
+  },
   // {
   //   title: 'Students',
   //   path: '/students',
