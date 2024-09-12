@@ -333,37 +333,57 @@ const Page = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'discount_price') {
+      // Handle amount formatting with commas
+      const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      setFormData({
+        ...formData,
+        [name]: numericValue, // Store raw numeric value without commas
+      });
+      
+    } else {
     setFormData({
       ...formData,
       [name]:
         name === 'quantity' ||
-        name === 'discount_price' ||
         name === 'total_price'
           ? parseFloat(value) || ''
           : value,
-    });
+    });}
+    
   };
 
   const handleChange2 = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'discount_price') {
+      // Handle amount formatting with commas
+      const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      setFormData2({
+        ...formData2,
+        [name]: numericValue, // Store raw numeric value without commas
+      });
+      
+    } else {
     setFormData2({
       ...formData2,
       [name]:
         name === 'area_in_square_meters' ||
-        name === 'discount_price' ||
         name === 'total_price'
           ? parseFloat(value) || ''
           : value,
-    });
+    });}
+
+
   };
 
-  const handleChange3 = (e) => {
-    const { name, value } = e.target;
-    setFormData3({
-      ...formData3,
-      [name]: name === 'expenses' ? parseFloat(value) || '' : value,
-    });
-  };
+  // const handleChange3 = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData3({
+  //     ...formData3,
+  //     [name]: name === 'expenses' ? parseFloat(value) || '' : value,
+  //   });
+  // };
 
  
   const formatCurrency = (value) => {
@@ -378,6 +398,37 @@ const Page = () => {
       .replace('TZS', 'Tsh');
   };
 
+
+  const handleChange3 = (e) => {
+    const { name, value } = e.target;
+  
+    if (name === 'expenses') {
+      // Handle amount formatting with commas
+      const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      setFormData3({
+        ...formData3,
+        [name]: numericValue, // Store raw numeric value without commas
+      });
+      
+    } else if (name === 'expense_name') {
+      // Convert debtor name to uppercase
+      const uppercasedName = value.toUpperCase();
+      setFormData3({
+        ...formData3,
+        [name]: uppercasedName, // Store the capitalized name
+      });
+    } else {
+      setFormData3({
+        ...formData3,
+        [name]: value,
+      });
+    }
+  };
+  
+  // Helper function to format numbers with commas
+  const formatWithCommas = (value) => {
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas every three digits
+  };
   return (
     <>
       <Head>
@@ -440,9 +491,10 @@ const Page = () => {
                         <TextField
                           fullWidth
                           label="Discount Price (optional)"
-                          type="number"
+                          type="text"
                           name="discount_price"
-                          value={formData.discount_price}
+                          value={formatWithCommas(formData.discount_price)}
+                          // value={formData.discount_price}
                           onChange={handleChange}
                         />
                         <TextField
@@ -518,9 +570,10 @@ const Page = () => {
                         <TextField
                           fullWidth
                           label="Discount Price (optional)"
-                          type="number"
+                          type="text"
                           name="discount_price"
-                          value={formData2.discount_price} // Use the raw value
+                          value={formatWithCommas(formData2.discount_price)}
+                          // value={formData2.discount_price} // Use the raw value
                           onChange={handleChange2}
                         />
                         <TextField
@@ -582,9 +635,10 @@ const Page = () => {
                         <TextField
                           fullWidth
                           label="Expense Price"
-                          type="number"
+                          type="text" 
                           name="expenses"
-                          value={formData3.expenses}
+                          value={formatWithCommas(formData3.expenses)}
+                          // value={formData3.expenses}
                           onChange={handleChange3}
                           required
                         />
