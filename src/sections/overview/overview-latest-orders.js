@@ -58,6 +58,18 @@ const handleClick = () => {
     fetchEntries();
   }, []);
 
+  const formatCurrency = (value) => {
+    const numericValue = Number(value) || 0;
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'TZS',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+      .format(numericValue)
+      .replace('TZS', 'Tsh');
+  };
+
   return (
     <Card sx={sx}>
       <CardHeader title="Current Debts" />
@@ -80,7 +92,7 @@ const handleClick = () => {
                   <TableRow hover key={debt.id}>
                     <TableCell>{debt.stock_name}</TableCell>
                     <TableCell>{debt.debtor_name}</TableCell>
-                    <TableCell>{debt.amount}</TableCell>
+                    <TableCell>{formatCurrency(debt.amount)}</TableCell>
                     <TableCell>{createdAt}</TableCell>
                     <TableCell>
                       <SeverityPill color={statusMap[debt.status]}>
