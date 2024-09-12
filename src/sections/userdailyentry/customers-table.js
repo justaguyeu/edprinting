@@ -398,7 +398,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                                       {/* Add Edit Button */}
                                       <Button
                                         variant="outlined"
-                                        onClick={() => handleEdit(entry)}
+                                        // onClick={() => handleEdit(entry)}
                                       >
                                         Edit
                                       </Button>
