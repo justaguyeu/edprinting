@@ -4,5 +4,6 @@
   "/_document": "pages/_document.js",
   "/debts": "pages/debts.js",
   "/user": "pages/user.js",
-  "/auth/login": "pages/auth/login.js"
+  "/auth/login": "pages/auth/login.js",
+  "/404": "pages/404.js"
 }
