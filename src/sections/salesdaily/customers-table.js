@@ -298,7 +298,7 @@ export const CustomersTable = (props) => {
     let totalBannerStickerPrice = 0;
     let totalExpenses = 0;
     let totalPaidDebts = calculatePaidDebtsTotal(debts);
-    let totalunPaidDebts = calculateunPaidDebtsTotal(debts);
+    // let totalunPaidDebts = calculateunPaidDebtsTotal(debts);
 
     // Uncomment these to aggregate data correctly
     entries.forEach((entry) => {
