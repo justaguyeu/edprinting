@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
+import { SeverityPill } from 'src/components/severity-pill';
 
 export const CustomersTable = (props) => {
   const {
@@ -42,11 +43,19 @@ export const CustomersTable = (props) => {
   const [entries, setEntries] = useState([]);
   const [entriess, setEntriess] = useState([]);
   const [entriesss, setEntriesss] = useState([]);
+  const [debts, setDebts] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [filteredEntriess, setFilteredEntriess] = useState([]);
   const [filteredEntriesss, setFilteredEntriesss] = useState([]);
+  const [filteredDebts, setFilteredDebts] = useState([]);
   const [loading, setLoading] = useState(false);
+  
+
+  const statusMap = {
+    pending: 'warning',
+    paid: 'success',
+  };
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -122,6 +131,28 @@ export const CustomersTable = (props) => {
   }, []);
 
   useEffect(() => {
+    const fetchEntriesDebt = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const response = await axios.get(`${BASE_URL}/debts/`, {
+            headers: { Authorization: `Bearer ${token}`},
+          });
+          setDebts(response.data);
+        } catch (error) {
+          console.error(
+            'Error fetching data:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+    fetchEntriesDebt();
+  }, []);
+
+  useEffect(() => {
     if (selectedDate) {
       const filtered = entries.filter((entry) => entry.date === selectedDate);
       setFilteredEntries(filtered);
@@ -147,6 +178,15 @@ export const CustomersTable = (props) => {
       setFilteredEntriess([]);
     }
   }, [selectedDate, entriess]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      const filtered = debts.filter((debt) => debt.date === selectedDate);
+      setFilteredDebts(filtered);
+    } else {
+      setFilteredDebts([]);
+    }
+  }, [selectedDate, debts]);
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -224,10 +264,41 @@ export const CustomersTable = (props) => {
 
   const totalsss = calculateTotalsss(filteredEntriesss);
 
-  const calculateTotalssss = (entries, entriess, entriesss) => {
+
+  const calculatePaidDebtsTotal = (debts) => {
+    let totalPaidDebts = 0;
+  
+    debts.forEach((debt) => {
+      if (debt.status === 'paid') {
+        totalPaidDebts += Number(debt.amount) || 0;
+      }
+    });
+  
+    return totalPaidDebts;
+  };
+
+  const totalPaidDebts = calculatePaidDebtsTotal(debts);
+
+  const calculateunPaidDebtsTotal = (debts) => {
+    let totalunPaidDebts = 0;
+  
+    debts.forEach((debt) => {
+      if (debt.status === 'pending') {
+        totalunPaidDebts += Number(debt.amount) || 0;
+      }
+    });
+  
+    return totalunPaidDebts;
+  };
+
+  const totalunPaidDebts = calculateunPaidDebtsTotal(debts);
+
+  const calculateTotalssss = (entries, entriess, entriesss, debts) => {
     let totalSalesPrice = 0;
     let totalBannerStickerPrice = 0;
     let totalExpenses = 0;
+    let totalPaidDebts = calculatePaidDebtsTotal(debts);
+    let totalunPaidDebts = calculateunPaidDebtsTotal(debts);
 
     // Uncomment these to aggregate data correctly
     entries.forEach((entry) => {
@@ -242,14 +313,23 @@ export const CustomersTable = (props) => {
       totalExpenses += Number(entry.expenses) || 0;
     });
 
+    // debts.forEach((debt) => {
+    //   if (debt.status === 'paid') {
+    //     totalPaidDebts += Number(debt.amount) || 0;
+    //   }
+    // });
+
     const totalProfit =
-      totalSalesPrice + totalBannerStickerPrice - totalExpenses;
+      totalSalesPrice + totalBannerStickerPrice + totalPaidDebts - totalExpenses - totalunPaidDebts;
 
     return {
       totalSalesPrice,
       totalBannerStickerPrice,
       totalExpenses,
       totalProfit,
+      totalPaidDebts,
+      totalunPaidDebts,
+
     };
   };
 
@@ -257,10 +337,26 @@ export const CustomersTable = (props) => {
     filteredEntries,
     filteredEntriess,
     filteredEntriesss,
+    filteredDebts,
   );
 
+  
+
+  
+
+  // const formatCurrency = (value) => {
+  //   const numericValue = Number(value) || 0;
+  //   return new Intl.NumberFormat('en-US', {
+  //     style: 'currency',
+  //     currency: 'TZS',
+  //     minimumFractionDigits: 2,
+  //     maximumFractionDigits: 2,
+  //   })
+  //     .format(numericValue)
+  //     .replace('TZS', 'Tsh');
+  // };
+
   return (
-    
     <>
       <Card sx={{ p: 2 }}>
         <div>
@@ -280,74 +376,82 @@ export const CustomersTable = (props) => {
           {selectedDate ? (
             filteredEntries.length > 0 ||
             filteredEntriess.length > 0 ||
+            filteredDebts.length > 0 ||
             filteredEntriesss.length > 0 ? (
-      <><CardContent>
-                <Card>
-                  <Scrollbar>
-                    <Box sx={{ minWidth: 800 }}>
-                      <Table>
-                        <TableHead>
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              p: 2,
-                              alignItems: 'center',
-                              display: 'flex',
-                              flexDirection: 'row',
-                            }}
-                          >
-                            Sales
-                          </Typography>
-                          <TableRow>
-                            <TableCell>USERNAME</TableCell>
-                            <TableCell>DATE</TableCell>
-                            <TableCell>ITEM NAME</TableCell>
-                            <TableCell>QUANTITY</TableCell>
-                            <TableCell>PRICE</TableCell>
-                            <TableCell>DISCOUNT PRICE</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {filteredEntries.map((entry) => {
-                            return (
-                              <TableRow>
-                                <TableCell>{entry.user ? entry.user : 'N/A'}</TableCell>
-                                <TableCell>{entry.date}</TableCell>
-                                <TableCell>{entry.item_name}</TableCell>
-                                <TableCell>{entry.quantity}</TableCell>
-                                <TableCell>
-                                  {formatCurrency(entry.total_price)}
-                                </TableCell>
-                                <TableCell>
-                                  {formatCurrency(entry.discount_price)}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                        <TableBody>
-                          {filteredEntriess.map((entry) => {
-                            return (
-                              <TableRow>
-                                <TableCell>{entry.user ? entry.user : 'N/A'}</TableCell>
-                                <TableCell>{entry.date}</TableCell>
-                                <TableCell>{entry.item_name}</TableCell>
-                                <TableCell>{entry.area_in_square_meters}</TableCell>
-                                <TableCell>
-                                  {formatCurrency(entry.total_price)}
-                                </TableCell>
-                                <TableCell>
-                                  {formatCurrency(entry.discount_price)}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-                    </Box>
-                  </Scrollbar>
+              <>
+                <CardContent>
+                  <Card>
+                    <Scrollbar>
+                      <Box sx={{ minWidth: 800 }}>
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              Sales
+                            </Typography>
+                            <TableRow>
+                              <TableCell>USERNAME</TableCell>
+                              <TableCell>DATE</TableCell>
+                              <TableCell>ITEM NAME</TableCell>
+                              <TableCell>QUANTITY</TableCell>
+                              <TableCell>PRICE</TableCell>
+                              <TableCell>DISCOUNT PRICE</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {filteredEntries.map((entry) => {
+                              return (
+                                <TableRow>
+                                  <TableCell>
+                                    {entry.user ? entry.user : 'N/A'}
+                                  </TableCell>
+                                  <TableCell>{entry.date}</TableCell>
+                                  <TableCell>{entry.item_name}</TableCell>
+                                  <TableCell>{entry.quantity}</TableCell>
+                                  <TableCell>
+                                    {formatCurrency(entry.total_price)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatCurrency(entry.discount_price)}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                          <TableBody>
+                            {filteredEntriess.map((entry) => {
+                              return (
+                                <TableRow>
+                                  <TableCell>
+                                    {entry.user ? entry.user : 'N/A'}
+                                  </TableCell>
+                                  <TableCell>{entry.date}</TableCell>
+                                  <TableCell>{entry.item_name}</TableCell>
+                                  <TableCell>
+                                    {entry.area_in_square_meters}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatCurrency(entry.total_price)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatCurrency(entry.discount_price)}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Scrollbar>
 
-                  {/* <TablePagination
+                    {/* <TablePagination
     component="div"
     count={count}
     onPageChange={onPageChange}
@@ -355,8 +459,9 @@ export const CustomersTable = (props) => {
     page={page}
     rowsPerPage={rowsPerPage}
     rowsPerPageOptions={[5, 10, 25]} /> */}
-                </Card>
-              </CardContent><CardContent>
+                  </Card>
+                </CardContent>
+                <CardContent>
                   <Card>
                     <Scrollbar>
                       <Box sx={{ minWidth: 800 }}>
@@ -384,7 +489,9 @@ export const CustomersTable = (props) => {
                             {filteredEntriesss.map((entry) => {
                               return (
                                 <TableRow>
-                                  <TableCell>{entry.user ? entry.user : 'N/A'}</TableCell>
+                                  <TableCell>
+                                    {entry.user ? entry.user : 'N/A'}
+                                  </TableCell>
                                   <TableCell>{entry.date}</TableCell>
                                   <TableCell>{entry.expense_name}</TableCell>
                                   <TableCell>
@@ -398,7 +505,63 @@ export const CustomersTable = (props) => {
                       </Box>
                     </Scrollbar>
                   </Card>
-                </CardContent><CardContent>
+                </CardContent>
+                <CardContent>
+                  <Card>
+                    <Scrollbar>
+                      <Box sx={{ minWidth: 800 }}>
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              Debts
+                              </Typography>
+                            <TableRow>
+                              <TableCell>Stock Name</TableCell>
+                              <TableCell>Customer Name</TableCell>
+                              <TableCell>Amount</TableCell>
+                              <TableCell>Date</TableCell>
+                              <TableCell>Status</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {filteredDebts.slice(0, 5).map((debt) => {
+                              const createdAt = format(
+                                new Date(debt.date),
+                                'dd/MM/yyyy',
+                              );
+                              return (
+                                <TableRow hover key={debt.id}>
+                                  <TableCell>{debt.stock_name}</TableCell>
+                                  <TableCell>{debt.debtor_name}</TableCell>
+                                  <TableCell>
+                                    {formatCurrency(debt.amount)}
+                                  </TableCell>
+                                  <TableCell>{createdAt}</TableCell>
+                                  <TableCell>
+                                    <SeverityPill
+                                      color={statusMap[debt.status]}
+                                    >
+                                      {debt.status}
+                                    </SeverityPill>
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Scrollbar>
+                  </Card>
+                </CardContent>
+                <CardContent>
                   <Card>
                     <Scrollbar>
                       <Box sx={{ minWidth: 800 }}>
@@ -418,8 +581,9 @@ export const CustomersTable = (props) => {
                             <TableRow>
                               <TableCell>TOTAL SALES</TableCell>
                               <TableCell>TOTAL BANNER/STICKER SALES</TableCell>
+                              <TableCell>TOTAL PAID DEBTS</TableCell>
+                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
                               <TableCell>TOTAL EXPENSES</TableCell>
-                              <TableCell>PROFIT MADE</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -428,11 +592,40 @@ export const CustomersTable = (props) => {
                                 {formatCurrency(totals.totalSalesPrice)}
                               </TableCell>
                               <TableCell>
-                                {formatCurrency(totalss.totalBannerStickerPrice)}
+                                {formatCurrency(
+                                  totalss.totalBannerStickerPrice,
+                                )}
                               </TableCell>
+                              <TableCell>{formatCurrency(totalPaidDebts)}</TableCell>
+                              <TableCell>{formatCurrency(totalunPaidDebts)}</TableCell>
+
                               <TableCell>
                                 {formatCurrency(totalsss.totalExpenses)}
                               </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              Daily Profit
+                            </Typography>
+                            <TableRow>
+                              
+                              <TableCell>PROFIT MADE</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow>
+                              
                               <TableCell>
                                 {formatCurrency(totalssss.totalProfit)}
                               </TableCell>
@@ -442,18 +635,17 @@ export const CustomersTable = (props) => {
                       </Box>
                     </Scrollbar>
                   </Card>
-                </CardContent></>
-) : (
-  <p>No data available for the selected date .</p>
-)
-) : (
-<p>Please select  date  to view the data.</p>
-)}
-</div>
-)}
-
+                </CardContent>
+              </>
+            ) : (
+              <p>No data available for the selected date .</p>
+            )
+          ) : (
+            <p>Please select date to view the data.</p>
+          )}
+        </div>
+      )}
     </>
-    
   );
 };
 

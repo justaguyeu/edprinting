@@ -219,6 +219,14 @@ const Page = () => {
     return `${monthName} ${year}`;
   };
 
+
+
+  
+  // Helper function to format numbers with commas
+  const formatWithCommas = (value) => {
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas every three digits
+  };
+
   return (
     <>
       <Head>
@@ -281,14 +289,15 @@ const Page = () => {
                         <TextField
                           fullWidth
                           label="Price per Unit"
-                          type="number"
-                          value={newStock.price_per_unit}
+                          type="text"
+                          value={formatWithCommas(newStock.price_per_unit)}
                           onChange={(e) =>
                             setNewStock({
                               ...newStock,
-                              price_per_unit: e.target.value,
+                              price_per_unit: e.target.value.replace(/\D/g, ''),
                             })
                           }
+                          // onChange={handleChange}
                           required
                         />
                         <input
