@@ -62,9 +62,10 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           setLoading(true);
-          const response = await axios.get(`${BASE_URL}/api/data/`, {
+          const response = await axios.get(`${BASE_URL}/api/dataa/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          console.log(response.data)
           setEntries(response.data);
           setLoading(false);
         } catch (error) {
@@ -86,7 +87,7 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           setLoading(true);
-          const response = await axios.get(`${BASE_URL}/api/data2/`, {
+          const response = await axios.get(`${BASE_URL}/api/data2a/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setEntriess(response.data);
@@ -110,7 +111,7 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           setLoading(true);
-          const response = await axios.get(`${BASE_URL}/api/dataexpense/`, {
+          const response = await axios.get(`${BASE_URL}/api/dataexpensea/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setEntriesss(response.data);
@@ -172,100 +173,8 @@ export const CustomersTable = (props) => {
       .replace('TZS', 'Tsh');
   };
 
-  const calculateTotals = (entries) => {
-    let totalExpenses = 0;
-    let totalSalesPrice = 0;
 
-    entries.forEach((entry) => {
-      totalSalesPrice += Number(entry.total_price) || 0;
-      totalExpenses += Number(entry.expenses) || 0;
-    });
 
-    const profit = totalSalesPrice - totalExpenses;
-
-    return {
-      totalSalesPrice,
-      totalExpenses,
-      profit,
-    };
-  };
-
-  const totals = calculateTotals(filteredEntries);
-
-  const calculateTotalss = (entriess) => {
-    let totalExpenses = 0;
-    let totalBannerStickerPrice = 0;
-
-    entriess.forEach((entry) => {
-      totalBannerStickerPrice += Number(entry.total_price) || 0;
-      totalExpenses += Number(entry.expenses) || 0;
-    });
-
-    const profit = totalBannerStickerPrice - totalExpenses;
-
-    return {
-      totalBannerStickerPrice,
-      totalExpenses,
-      profit,
-    };
-  };
-
-  const totalss = calculateTotalss(filteredEntriess);
-
-  const calculateTotalsss = (entriesss) => {
-    let totalExpenses = 0;
-    let totalPrice = 0;
-
-    entriesss.forEach((entry) => {
-      totalPrice += Number(entry.total_price) || 0;
-      totalExpenses += Number(entry.expenses) || 0;
-    });
-
-    const profit = totalPrice - totalExpenses;
-
-    return {
-      totalPrice,
-      totalExpenses,
-      profit,
-    };
-  };
-
-  const totalsss = calculateTotalsss(filteredEntriesss);
-
-  const calculateTotalssss = (entries, entriess, entriesss) => {
-    let totalSalesPrice = 0;
-    let totalBannerStickerPrice = 0;
-    let totalExpenses = 0;
-
-    // Uncomment these to aggregate data correctly
-    entries.forEach((entry) => {
-      totalSalesPrice += Number(entry.total_price) || 0;
-    });
-
-    entriess.forEach((entry) => {
-      totalBannerStickerPrice += Number(entry.total_price) || 0;
-    });
-
-    entriesss.forEach((entry) => {
-      totalExpenses += Number(entry.expenses) || 0;
-    });
-
-    const totalProfit =
-      totalSalesPrice + totalBannerStickerPrice - totalExpenses;
-
-    return {
-      totalSalesPrice,
-      totalBannerStickerPrice,
-      totalExpenses,
-      totalProfit,
-    };
-  };
-
-  const totalssss = calculateTotalssss(
-    filteredEntries,
-    filteredEntriess,
-    filteredEntriesss,
-  );
 
   // Handle Edit button click
   const handleEdit = (entry) => {
@@ -283,21 +192,56 @@ export const CustomersTable = (props) => {
   };
 
   // Save the updated data
-  const handleSave = async () => {
+  // const handleSave = async () => {
+  //   const token = localStorage.getItem('access_token');
+  //   if (token) {
+  //   try {
+  //     // await axios.put(`${BASE_URL}/api/dataa/${editData.id}/`, editData, {
+  //       const response = await axios.get(`${BASE_URL}/api/dataa/${editData.id}/`, editData, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     setOpenEditModal(false); // Close modal on success
+  //     setEntries(response.data); // Refresh the data after edit
+  //   } catch (error) {
+  //     console.error(
+  //       'Error updating data:',
+  //       error.response ? error.response.data : error.message,
+  //     );
+  //   }}
+  // };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     const token = localStorage.getItem('access_token');
-    try {
-      await axios.put(`${BASE_URL}/api/data/${editData.id}/`, editData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setOpenEditModal(false); // Close modal on success
-      fetchEntries(); // Refresh the data after edit
-    } catch (error) {
-      console.error(
-        'Error updating data:',
-        error.response ? error.response.data : error.message,
-      );
+    if (token) {
+      try {
+        const response = await axios.put(`${BASE_URL}/api/dataa/${editData.id}/`, editData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOpenEditModal(false);
+        // Update the entries state to reflect the edited data
+        setEntries((prevEntries) => prevEntries.map(entry => 
+          entry.id === editData.id ? response.data : entry
+        ));
+      } catch (error) {
+        if (error.response && error.response.data && error.response.data.error) {
+          alert(error.response.data.error);
+        } else {
+          console.error(
+            'Data submission failed:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      console.error('No token found');
     }
   };
+  
+
 
   return (
     <>
@@ -395,15 +339,15 @@ export const CustomersTable = (props) => {
                                     <TableCell>
                                       {formatCurrency(entry.discount_price)}
                                     </TableCell>
-                                    <TableCell>
-                                      {/* Add Edit Button */}
+                                    {/* <TableCell>
+                                      
                                       <Button
                                         variant="outlined"
                                         onClick={() => handleEdit(entry)}
                                       >
                                         Edit
                                       </Button>
-                                    </TableCell>
+                                    </TableCell> */}
                                   </TableRow>
                                 );
                               })}
