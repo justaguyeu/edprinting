@@ -216,7 +216,7 @@ export const CustomersTable = (props) => {
     const token = localStorage.getItem('access_token');
     if (token) {
       try {
-        const response = await axios.put(`${BASE_URL}/api/dataa/${editData.id}/`, editData, {
+        const response = await axios.put(`${BASE_URL}/api/data/${editData.id}/`, editData, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOpenEditModal(false);
@@ -308,15 +308,7 @@ export const CustomersTable = (props) => {
                                     <TableCell>
                                       {formatCurrency(entry.discount_price)}
                                     </TableCell>
-                                    <TableCell>
-                                      {/* Add Edit Button */}
-                                      <Button
-                                        variant="outlined"
-                                        onClick={() => handleEdit(entry)}
-                                      >
-                                        Edit
-                                      </Button>
-                                    </TableCell>
+                                    
                                   </TableRow>
                                 );
                               })}
@@ -401,6 +393,15 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                                     <TableCell>{entry.expense_name}</TableCell>
                                     <TableCell>
                                       {formatCurrency(entry.expenses) || 0}
+                                    </TableCell>
+                                    <TableCell>
+                                      {/* Add Edit Button */}
+                                      <Button
+                                        variant="outlined"
+                                        onClick={() => handleEdit(entry)}
+                                      >
+                                        Edit
+                                      </Button>
                                     </TableCell>
                                   </TableRow>
                                 );
