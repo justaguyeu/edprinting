@@ -27,15 +27,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/salesdaily": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/salesdaily.js"
-    ],
     "/user": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/user.js"
+    ],
+    "/userentry": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/userentry.js"
     ]
   },
   "ampFirstPages": []

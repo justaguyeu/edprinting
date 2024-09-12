@@ -29,6 +29,16 @@ export const items = [
       </SvgIcon>
     ),
   },
+
+  {
+    title: 'Entry Sales',
+    path: '/userentry',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CogIcon/>
+      </SvgIcon>
+    ),
+  },
   // {
   //   title: 'Students',
   //   path: '/students',
