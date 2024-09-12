@@ -279,19 +279,19 @@ export const CustomersTable = (props) => {
 
   const totalPaidDebts = calculatePaidDebtsTotal(debts);
 
-  const calculateunPaidDebtsTotal = (debts) => {
-    let totalunPaidDebts = 0;
+  // const calculateunPaidDebtsTotal = (debts) => {
+  //   let totalunPaidDebts = 0;
   
-    debts.forEach((debt) => {
-      if (debt.status === 'pending') {
-        totalunPaidDebts += Number(debt.amount) || 0;
-      }
-    });
+  //   debts.forEach((debt) => {
+  //     if (debt.status === 'pending') {
+  //       totalunPaidDebts += Number(debt.amount) || 0;
+  //     }
+  //   });
   
-    return totalunPaidDebts;
-  };
+  //   return totalunPaidDebts;
+  // };
 
-  const totalunPaidDebts = calculateunPaidDebtsTotal(debts);
+  // const totalunPaidDebts = calculateunPaidDebtsTotal(debts);
 
   const calculateTotalssss = (entries, entriess, entriesss, debts) => {
     let totalSalesPrice = 0;
@@ -320,7 +320,7 @@ export const CustomersTable = (props) => {
     // });
 
     const totalProfit =
-      totalSalesPrice + totalBannerStickerPrice + totalPaidDebts - totalExpenses - totalunPaidDebts;
+      totalSalesPrice + totalBannerStickerPrice + totalPaidDebts - totalExpenses;
 
     return {
       totalSalesPrice,
@@ -328,7 +328,7 @@ export const CustomersTable = (props) => {
       totalExpenses,
       totalProfit,
       totalPaidDebts,
-      totalunPaidDebts,
+      // totalunPaidDebts,
 
     };
   };
@@ -582,7 +582,7 @@ export const CustomersTable = (props) => {
                               <TableCell>TOTAL SALES</TableCell>
                               <TableCell>TOTAL BANNER/STICKER SALES</TableCell>
                               <TableCell>TOTAL PAID DEBTS</TableCell>
-                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
+                              {/* <TableCell>TOTAL UNPAID DEBTS</TableCell> */}
                               <TableCell>TOTAL EXPENSES</TableCell>
                             </TableRow>
                           </TableHead>
@@ -597,7 +597,7 @@ export const CustomersTable = (props) => {
                                 )}
                               </TableCell>
                               <TableCell>{formatCurrency(totalPaidDebts)}</TableCell>
-                              <TableCell>{formatCurrency(totalunPaidDebts)}</TableCell>
+                              {/* <TableCell>{formatCurrency(totalunPaidDebts)}</TableCell> */}
 
                               <TableCell>
                                 {formatCurrency(totalsss.totalExpenses)}
