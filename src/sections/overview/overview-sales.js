@@ -100,7 +100,7 @@ const useChartOptions = () => {
     },
     yaxis: {
       min: 0, // Start the y-axis at 0
-      max: 1000000, // Set the maximum value (adjust based on your data)
+      max: 5000000, // Set the maximum value (adjust based on your data)
       tickAmount: 5, // Number of intervals (this creates 5 intervals of 200,000)
       labels: {
         formatter: (value) => `${value.toLocaleString()} Tsh`, // Format the label with 'Tsh' and commas for readability
