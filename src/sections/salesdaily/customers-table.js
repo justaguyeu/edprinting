@@ -23,6 +23,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { SeverityPill } from 'src/components/severity-pill';
 
+
 export const CustomersTable = (props) => {
   const {
     count = 0,
@@ -43,11 +44,13 @@ export const CustomersTable = (props) => {
   const [entries, setEntries] = useState([]);
   const [entriess, setEntriess] = useState([]);
   const [entriesss, setEntriesss] = useState([]);
+  const [outofstock, setOutofstock] = useState([]);
   const [debts, setDebts] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [filteredEntriess, setFilteredEntriess] = useState([]);
   const [filteredEntriesss, setFilteredEntriesss] = useState([]);
+  const [filteredOutofstock, setFilteredOutofstock] = useState([]);
   const [filteredDebts, setFilteredDebts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -130,6 +133,31 @@ export const CustomersTable = (props) => {
   }, []);
 
   useEffect(() => {
+    const fetchOutofstock = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          setLoading(true);
+          const response = await axios.get(`${BASE_URL}/api/dataoutofstock/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setOutofstock(response.data);
+          setLoading(false);
+        } catch (error) {
+          console.error(
+            'Error fetching data:',
+            error.response ? error.response.data : error.message,
+          );
+          setLoading(false);
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+    fetchOutofstock();
+  }, []);
+
+  useEffect(() => {
     const fetchEntriesDebt = async () => {
       const token = localStorage.getItem('access_token');
       if (token) {
@@ -168,6 +196,15 @@ export const CustomersTable = (props) => {
       setFilteredEntriesss([]);
     }
   }, [selectedDate, entriesss]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      const filtered = outofstock.filter((entry) => entry.date === selectedDate);
+      setFilteredOutofstock(filtered);
+    } else {
+      setFilteredOutofstock([]);
+    }
+  }, [selectedDate, outofstock]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -223,6 +260,26 @@ export const CustomersTable = (props) => {
 
   const totals = calculateTotals(filteredEntries);
 
+  const calculateTotalsOutofstock = (outofstock) => {
+    let totalOutofstock = 0;
+    let totalOutPrice = 0;
+
+    outofstock.forEach((entry) => {
+      totalOutPrice += Number(entry.total_price) || 0;
+      totalOutofstock += Number(entry.price) || 0;
+    });
+
+    const profit = totalOutPrice - totalOutofstock;
+
+    return {
+      totalOutPrice,
+      totalOutofstock,
+      profit,
+    };
+  };
+
+  const totalsOut = calculateTotalsOutofstock(filteredOutofstock);
+
   const calculateTotalss = (entriess) => {
     let totalExpenses = 0;
     let totalBannerStickerPrice = 0;
@@ -263,6 +320,8 @@ export const CustomersTable = (props) => {
 
   const totalsss = calculateTotalsss(filteredEntriesss);
 
+
+
   const calculatePaidDebtsTotal = (debts, selectedDate) => {
     let totalPaidDebts = 0;
 
@@ -275,6 +334,8 @@ export const CustomersTable = (props) => {
 
     return totalPaidDebts;
   };
+
+
 
   const calculateunPaidDebtsTotal = (debts, selectedDate) => {
     let totalunPaidDebts = 0;
@@ -293,11 +354,14 @@ export const CustomersTable = (props) => {
   const totalPaidDebts = calculatePaidDebtsTotal(debts, selectedDate);
   const totalunPaidDebts = calculateunPaidDebtsTotal(debts, selectedDate);
 
-  const calculateTotalssss = (entries, entriess, entriesss, debts) => {
+
+
+  const calculateTotalssss = (entries, entriess, entriesss, debts, outofstock) => {
     let totalSalesPrice = 0;
     let totalBannerStickerPrice = 0;
     let totalExpenses = 0;
     let totalPaidDebts = 0;
+    let totalOutPrice = 0;
     let totalunPaidDebts = 0;
 
     // Uncomment these to aggregate data correctly
@@ -311,6 +375,10 @@ export const CustomersTable = (props) => {
 
     entriesss.forEach((entry) => {
       totalExpenses += Number(entry.expenses) || 0;
+    });
+
+    outofstock.forEach((entry) => {
+      totalOutPrice += Number(entry.price) || 0;
     });
 
     debts.forEach((debt) => {
@@ -328,6 +396,7 @@ export const CustomersTable = (props) => {
     const totalProfit =
       totalSalesPrice +
       totalBannerStickerPrice +
+      totalOutPrice +
       totalPaidDebts -
       totalExpenses -
       totalunPaidDebts;
@@ -336,6 +405,7 @@ export const CustomersTable = (props) => {
       totalSalesPrice,
       totalBannerStickerPrice,
       totalExpenses,
+      totalOutPrice,
       totalProfit,
       totalPaidDebts,
       totalunPaidDebts,
@@ -347,19 +417,10 @@ export const CustomersTable = (props) => {
     filteredEntriess,
     filteredEntriesss,
     filteredDebts,
+    filteredOutofstock,
   );
 
-  // const formatCurrency = (value) => {
-  //   const numericValue = Number(value) || 0;
-  //   return new Intl.NumberFormat('en-US', {
-  //     style: 'currency',
-  //     currency: 'TZS',
-  //     minimumFractionDigits: 2,
-  //     maximumFractionDigits: 2,
-  //   })
-  //     .format(numericValue)
-  //     .replace('TZS', 'Tsh');
-  // };
+
 
   return (
     <>
@@ -381,6 +442,7 @@ export const CustomersTable = (props) => {
           {selectedDate ? (
             filteredEntries.length > 0 ||
             filteredEntriess.length > 0 ||
+            filteredOutofstock.length > 0 ||
             filteredDebts.length > 0 ||
             filteredEntriesss.length > 0 ? (
               <>
@@ -399,7 +461,7 @@ export const CustomersTable = (props) => {
                                 flexDirection: 'row',
                               }}
                             >
-                              Sales
+                              Stock Sales
                             </Typography>
                             <TableRow>
                               <TableCell>USERNAME</TableCell>
@@ -464,6 +526,51 @@ export const CustomersTable = (props) => {
     page={page}
     rowsPerPage={rowsPerPage}
     rowsPerPageOptions={[5, 10, 25]} /> */}
+                  </Card>
+                </CardContent>
+                <CardContent>
+                  <Card>
+                    <Scrollbar>
+                      <Box sx={{ minWidth: 800 }}>
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              Non Stock Sales
+                            </Typography>
+                            <TableRow>
+                              <TableCell>USERNAME</TableCell>
+                              <TableCell>DATE</TableCell>
+                              <TableCell> NAME</TableCell>
+                              <TableCell>PRICE</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {filteredOutofstock.map((entry) => {
+                              return (
+                                <TableRow>
+                                  <TableCell>
+                                    {entry.user ? entry.user : 'N/A'}
+                                  </TableCell>
+                                  <TableCell>{entry.date}</TableCell>
+                                  <TableCell>{entry.name}</TableCell>
+                                  <TableCell>
+                                    {formatCurrency(entry.price) || 0}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Scrollbar>
                   </Card>
                 </CardContent>
                 <CardContent>
@@ -584,7 +691,8 @@ export const CustomersTable = (props) => {
                               Daily Totals
                             </Typography>
                             <TableRow>
-                              <TableCell>TOTAL SALES</TableCell>
+                              <TableCell>TOTAL STOCK SALES</TableCell>
+                              <TableCell>TOTAL NON STOCK SALES</TableCell>
                               <TableCell>TOTAL BANNER/STICKER SALES</TableCell>
                               <TableCell>TOTAL PAID DEBTS</TableCell>
                               <TableCell>TOTAL UNPAID DEBTS</TableCell>
@@ -595,6 +703,9 @@ export const CustomersTable = (props) => {
                             <TableRow>
                               <TableCell>
                                 {formatCurrency(totals.totalSalesPrice)}
+                              </TableCell>
+                              <TableCell>
+                                {formatCurrency(totalsOut.totalOutofstock)}
                               </TableCell>
                               <TableCell>
                                 {formatCurrency(
@@ -638,6 +749,7 @@ export const CustomersTable = (props) => {
                                 {formatCurrency(
                                   totalssss.totalSalesPrice +
                                     totalssss.totalBannerStickerPrice +
+                                    totalsOut.totalOutofstock +
                                     totalPaidDebts -
                                     totalssss.totalExpenses -
                                     totalunPaidDebts,

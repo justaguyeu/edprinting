@@ -735,7 +735,7 @@ const Page = () => {
                   </form>
 
                   <form onSubmit={handleSubmit4}>
-                    <h2>OUT OF STOCK SALES</h2>
+                    <h2>NON STOCK SALES</h2>
                     <CardContent>
                       <Stack spacing={3} sx={{ maxWidth: 400 }}>
                         <input
