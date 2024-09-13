@@ -23,7 +23,6 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { SeverityPill } from 'src/components/severity-pill';
 
-
 export const CustomersTable = (props) => {
   const {
     count = 0,
@@ -199,7 +198,9 @@ export const CustomersTable = (props) => {
 
   useEffect(() => {
     if (selectedDate) {
-      const filtered = outofstock.filter((entry) => entry.date === selectedDate);
+      const filtered = outofstock.filter(
+        (entry) => entry.date === selectedDate,
+      );
       setFilteredOutofstock(filtered);
     } else {
       setFilteredOutofstock([]);
@@ -320,8 +321,6 @@ export const CustomersTable = (props) => {
 
   const totalsss = calculateTotalsss(filteredEntriesss);
 
-
-
   const calculatePaidDebtsTotal = (debts, selectedDate) => {
     let totalPaidDebts = 0;
 
@@ -334,8 +333,6 @@ export const CustomersTable = (props) => {
 
     return totalPaidDebts;
   };
-
-
 
   const calculateunPaidDebtsTotal = (debts, selectedDate) => {
     let totalunPaidDebts = 0;
@@ -354,9 +351,13 @@ export const CustomersTable = (props) => {
   const totalPaidDebts = calculatePaidDebtsTotal(debts, selectedDate);
   const totalunPaidDebts = calculateunPaidDebtsTotal(debts, selectedDate);
 
-
-
-  const calculateTotalssss = (entries, entriess, entriesss, debts, outofstock) => {
+  const calculateTotalssss = (
+    entries,
+    entriess,
+    entriesss,
+    debts,
+    outofstock,
+  ) => {
     let totalSalesPrice = 0;
     let totalBannerStickerPrice = 0;
     let totalExpenses = 0;
@@ -419,8 +420,6 @@ export const CustomersTable = (props) => {
     filteredDebts,
     filteredOutofstock,
   );
-
-
 
   return (
     <>
@@ -694,9 +693,6 @@ export const CustomersTable = (props) => {
                               <TableCell>TOTAL STOCK SALES</TableCell>
                               <TableCell>TOTAL NON STOCK SALES</TableCell>
                               <TableCell>TOTAL BANNER/STICKER SALES</TableCell>
-                              <TableCell>TOTAL PAID DEBTS</TableCell>
-                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
-                              <TableCell>TOTAL EXPENSES</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -712,6 +708,20 @@ export const CustomersTable = (props) => {
                                   totalss.totalBannerStickerPrice,
                                 )}
                               </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                        <Table>
+                          <TableHead>
+                            
+                            <TableRow>
+                              <TableCell>TOTAL PAID DEBTS</TableCell>
+                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
+                              <TableCell>TOTAL EXPENSES</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow>
                               <TableCell>
                                 {formatCurrency(totalPaidDebts)}
                               </TableCell>{' '}
