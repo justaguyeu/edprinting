@@ -50,7 +50,6 @@ export const CustomersTable = (props) => {
   const [filteredEntriesss, setFilteredEntriesss] = useState([]);
   const [filteredDebts, setFilteredDebts] = useState([]);
   const [loading, setLoading] = useState(false);
-  
 
   const statusMap = {
     pending: 'warning',
@@ -136,7 +135,7 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           const response = await axios.get(`${BASE_URL}/debts/`, {
-            headers: { Authorization: `Bearer ${token}`},
+            headers: { Authorization: `Bearer ${token}` },
           });
           setDebts(response.data);
         } catch (error) {
@@ -264,41 +263,42 @@ export const CustomersTable = (props) => {
 
   const totalsss = calculateTotalsss(filteredEntriesss);
 
-
-  const calculatePaidDebtsTotal = (debts) => {
+  const calculatePaidDebtsTotal = (debts, selectedDate) => {
     let totalPaidDebts = 0;
-  
+
     debts.forEach((debt) => {
-      if (debt.status === 'paid') {
+      // Check if debt is paid and the debt date matches the selected date
+      if (debt.status === 'paid' && debt.date === selectedDate) {
         totalPaidDebts += Number(debt.amount) || 0;
       }
     });
-  
+
     return totalPaidDebts;
   };
 
-  const totalPaidDebts = calculatePaidDebtsTotal(debts);
+  const calculateunPaidDebtsTotal = (debts, selectedDate) => {
+    let totalunPaidDebts = 0;
 
-  // const calculateunPaidDebtsTotal = (debts) => {
-  //   let totalunPaidDebts = 0;
-  
-  //   debts.forEach((debt) => {
-  //     if (debt.status === 'pending') {
-  //       totalunPaidDebts += Number(debt.amount) || 0;
-  //     }
-  //   });
-  
-  //   return totalunPaidDebts;
-  // };
+    debts.forEach((debt) => {
+      // Check if debt is unpaid (pending) and the debt date matches the selected date
+      if (debt.status === 'pending' && debt.date === selectedDate) {
+        totalunPaidDebts += Number(debt.amount) || 0;
+      }
+    });
 
-  // const totalunPaidDebts = calculateunPaidDebtsTotal(debts);
+    return totalunPaidDebts;
+  };
+
+  // Calculate the totals for debts filtered by the selected date
+  const totalPaidDebts = calculatePaidDebtsTotal(debts, selectedDate);
+  const totalunPaidDebts = calculateunPaidDebtsTotal(debts, selectedDate);
 
   const calculateTotalssss = (entries, entriess, entriesss, debts) => {
     let totalSalesPrice = 0;
     let totalBannerStickerPrice = 0;
     let totalExpenses = 0;
-    let totalPaidDebts = calculatePaidDebtsTotal(debts);
-    // let totalunPaidDebts = calculateunPaidDebtsTotal(debts);
+    let totalPaidDebts = 0;
+    let totalunPaidDebts = 0;
 
     // Uncomment these to aggregate data correctly
     entries.forEach((entry) => {
@@ -313,14 +313,24 @@ export const CustomersTable = (props) => {
       totalExpenses += Number(entry.expenses) || 0;
     });
 
-    // debts.forEach((debt) => {
-    //   if (debt.status === 'paid') {
-    //     totalPaidDebts += Number(debt.amount) || 0;
-    //   }
-    // });
+    debts.forEach((debt) => {
+      if (debt.status === 'paid') {
+        totalPaidDebts += Number(debt.amount) || 0;
+      }
+    });
+
+    debts.forEach((debt) => {
+      if (debt.status === 'paid') {
+        totalunPaidDebts += Number(debt.amount) || 0;
+      }
+    });
 
     const totalProfit =
-      totalSalesPrice + totalBannerStickerPrice + totalPaidDebts - totalExpenses;
+      totalSalesPrice +
+      totalBannerStickerPrice +
+      totalPaidDebts -
+      totalExpenses -
+      totalunPaidDebts;
 
     return {
       totalSalesPrice,
@@ -328,8 +338,7 @@ export const CustomersTable = (props) => {
       totalExpenses,
       totalProfit,
       totalPaidDebts,
-      // totalunPaidDebts,
-
+      totalunPaidDebts,
     };
   };
 
@@ -339,10 +348,6 @@ export const CustomersTable = (props) => {
     filteredEntriesss,
     filteredDebts,
   );
-
-  
-
-  
 
   // const formatCurrency = (value) => {
   //   const numericValue = Number(value) || 0;
@@ -522,7 +527,7 @@ export const CustomersTable = (props) => {
                               }}
                             >
                               Debts
-                              </Typography>
+                            </Typography>
                             <TableRow>
                               <TableCell>Stock Name</TableCell>
                               <TableCell>Customer Name</TableCell>
@@ -582,7 +587,7 @@ export const CustomersTable = (props) => {
                               <TableCell>TOTAL SALES</TableCell>
                               <TableCell>TOTAL BANNER/STICKER SALES</TableCell>
                               <TableCell>TOTAL PAID DEBTS</TableCell>
-                              {/* <TableCell>TOTAL UNPAID DEBTS</TableCell> */}
+                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
                               <TableCell>TOTAL EXPENSES</TableCell>
                             </TableRow>
                           </TableHead>
@@ -596,9 +601,13 @@ export const CustomersTable = (props) => {
                                   totalss.totalBannerStickerPrice,
                                 )}
                               </TableCell>
-                              <TableCell>{formatCurrency(totalPaidDebts)}</TableCell>
-                              {/* <TableCell>{formatCurrency(totalunPaidDebts)}</TableCell> */}
-
+                              <TableCell>
+                                {formatCurrency(totalPaidDebts)}
+                              </TableCell>{' '}
+                              {/* Total Paid Debts */}
+                              <TableCell>
+                                {formatCurrency(totalunPaidDebts)}
+                              </TableCell>
                               <TableCell>
                                 {formatCurrency(totalsss.totalExpenses)}
                               </TableCell>
@@ -619,15 +628,20 @@ export const CustomersTable = (props) => {
                               Daily Profit
                             </Typography>
                             <TableRow>
-                              
                               <TableCell>PROFIT MADE</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
                             <TableRow>
-                              
                               <TableCell>
-                                {formatCurrency(totalssss.totalProfit)}
+                                {/* Profit formula that adds sales and paid debts and subtracts expenses */}
+                                {formatCurrency(
+                                  totalssss.totalSalesPrice +
+                                    totalssss.totalBannerStickerPrice +
+                                    totalPaidDebts -
+                                    totalssss.totalExpenses -
+                                    totalunPaidDebts,
+                                )}
                               </TableCell>
                             </TableRow>
                           </TableBody>

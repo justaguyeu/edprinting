@@ -57,9 +57,16 @@ const Page = () => {
     total_price: '',
     discount_price: '',
   });
+
+  const [formData4, setFormData4] = useState({
+    date: '',
+    name: '',
+    price: '',
+  });
   const [loadingSales, setLoadingSales] = useState(false);
   const [loadingBannerSticker, setLoadingBannerSticker] = useState(false);
   const [loadingExpenses, setLoadingExpenses] = useState(false);
+  const [loadingOutofstock, setLoadingOutofstock] = useState(false);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -331,6 +338,36 @@ const Page = () => {
     }
   };
 
+  const handleSubmit4 = async (e) => {
+    e.preventDefault();
+    setLoadingOutofstock(true);
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/api/dataoutofstock/`,
+          formData4,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        setEntriesss([...entries, response.data]);
+        setFormData4({ date: '', name: '', price: '' });
+      } catch (error) {
+        console.error(
+          'Data submission failed:',
+          error.response ? error.response.data : error.message,
+        );
+      } finally {
+        setLoadingOutofstock(false);
+      
+      }
+      
+    } else {
+      console.error('No token found');
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'discount_price') {
@@ -420,6 +457,32 @@ const Page = () => {
     } else {
       setFormData3({
         ...formData3,
+        [name]: value,
+      });
+    }
+  };
+
+  const handleChange4 = (e) => {
+    const { name, value } = e.target;
+  
+    if (name === 'price') {
+      // Handle amount formatting with commas
+      const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      setFormData4({
+        ...formData4,
+        [name]: numericValue, // Store raw numeric value without commas
+      });
+      
+    } else if (name === 'name') {
+      // Convert debtor name to uppercase
+      const uppercasedName = value.toUpperCase();
+      setFormData4({
+        ...formData4,
+        [name]: uppercasedName, // Store the capitalized name
+      });
+    } else {
+      setFormData4({
+        ...formData4,
         [name]: value,
       });
     }
@@ -666,6 +729,65 @@ const Page = () => {
                           />
                         )}
                         {loadingExpenses ? 'Adding...' : 'Submit'}
+                      </Button>
+                      </Stack>
+                    </CardContent>
+                  </form>
+
+                  <form onSubmit={handleSubmit4}>
+                    <h2>OUT OF STOCK SALES</h2>
+                    <CardContent>
+                      <Stack spacing={3} sx={{ maxWidth: 400 }}>
+                        <input
+                          type="date"
+                          name="date"
+                          value={formData4.date}
+                          onChange={handleChange4}
+                          required
+                        />
+                        <TextField
+                          fullWidth
+                          label="Name"
+                          type="text"
+                          name="name"
+                          value={formData4.name}
+                          onChange={handleChange4}
+                          required
+                        />
+                        <TextField
+                          fullWidth
+                          label="Price"
+                          type="text" 
+                          name="price"
+                          value={formatWithCommas(formData4.price)}
+                          // value={formData3.expenses}
+                          onChange={handleChange4}
+                          required
+                        />
+                        {/* <Button variant="contained" type="submit">
+                          Submit
+                        </Button> */}
+                        <Button
+                        variant="contained"
+                        type="submit"
+                        disabled={loadingOutofstock}
+                        sx={{
+                          position: 'relative',
+                        }}
+                      >
+                        {loadingOutofstock && (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              marginTop: '-12px',
+                              marginLeft: '-12px',
+                            }}
+                          />
+                        )}
+                        {loadingOutofstock ? 'Adding...' : 'Submit'}
                       </Button>
                       </Stack>
                     </CardContent>

@@ -62,7 +62,7 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           setLoading(true);
-          const response = await axios.get(`${BASE_URL}/api/dataa/`, {
+          const response = await axios.get(`${BASE_URL}/api/data/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           console.log(response.data)
@@ -87,7 +87,7 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           setLoading(true);
-          const response = await axios.get(`${BASE_URL}/api/data2a/`, {
+          const response = await axios.get(`${BASE_URL}/api/data2/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setEntriess(response.data);
@@ -111,7 +111,7 @@ export const CustomersTable = (props) => {
       if (token) {
         try {
           setLoading(true);
-          const response = await axios.get(`${BASE_URL}/api/dataexpensea/`, {
+          const response = await axios.get(`${BASE_URL}/api/dataexpense/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setEntriesss(response.data);

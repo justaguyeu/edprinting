@@ -2,7 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/salesdaily": "pages/salesdaily.js",
-  "/salesweekly": "pages/salesweekly.js",
-  "/stockview": "pages/stockview.js"
+  "/user": "pages/user.js",
+  "/auth/login": "pages/auth/login.js",
+  "/debts": "pages/debts.js"
 }
