@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
+import { SeverityPill } from 'src/components/severity-pill';
 
 export const CustomersTable = (props) => {
   const {
@@ -42,12 +43,21 @@ export const CustomersTable = (props) => {
   const [entries, setEntries] = useState([]);
   const [entriess, setEntriess] = useState([]);
   const [entriesss, setEntriesss] = useState([]);
+  const [outofstock, setOutofstock] = useState([]);
+  const [debts, setDebts] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [filteredEntriess, setFilteredEntriess] = useState([]);
   const [filteredEntriesss, setFilteredEntriesss] = useState([]);
+  const [filteredOutofstock, setFilteredOutofstock] = useState([]);
+  const [filteredDebts, setFilteredDebts] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const statusMap = {
+    pending: 'warning',
+    paid: 'success',
+  };
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -72,6 +82,31 @@ export const CustomersTable = (props) => {
       }
     };
     fetchEntries();
+  }, []);
+
+  useEffect(() => {
+    const fetchOutofstock = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          setLoading(true);
+          const response = await axios.get(`${BASE_URL}/api/dataoutofstock/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setOutofstock(response.data);
+          setLoading(false);
+        } catch (error) {
+          console.error(
+            'Error fetching data:',
+            error.response ? error.response.data : error.message,
+          );
+          setLoading(false);
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+    fetchOutofstock();
   }, []);
 
   useEffect(() => {
@@ -125,6 +160,28 @@ export const CustomersTable = (props) => {
   }, []);
 
   useEffect(() => {
+    const fetchEntriesDebt = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const response = await axios.get(`${BASE_URL}/debts/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setDebts(response.data);
+        } catch (error) {
+          console.error(
+            'Error fetching data:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+    fetchEntriesDebt();
+  }, []);
+
+  useEffect(() => {
     const filterEntriesByDateRange = (entries) => {
       if (startDate && endDate) {
         return entries.filter((entry) => {
@@ -140,7 +197,9 @@ export const CustomersTable = (props) => {
     setFilteredEntries(filterEntriesByDateRange(entries));
     setFilteredEntriess(filterEntriesByDateRange(entriess));
     setFilteredEntriesss(filterEntriesByDateRange(entriesss));
-  }, [startDate, endDate, entries, entriess, entriesss]);
+    setFilteredOutofstock(filterEntriesByDateRange(outofstock));
+    setFilteredDebts(filterEntriesByDateRange(debts));
+  }, [startDate, endDate, entries, entriess, entriesss, outofstock, debts]);
 
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
@@ -222,10 +281,67 @@ export const CustomersTable = (props) => {
 
   const totalsss = calculateTotalsss(filteredEntriesss);
 
-  const calculateTotalssss = (entries, entriess, entriesss) => {
+  const calculatePaidDebtsTotal = (debts,) => {
+    let totalPaidDebts = 0;
+
+    debts.forEach((debt) => {
+      // Check if debt is paid and the debt date matches the selected date
+      if (debt.status === 'paid' && debt.date) {
+        totalPaidDebts += Number(debt.amount) || 0;
+      }
+    });
+
+    return totalPaidDebts;
+  };
+  const calculateunPaidDebtsTotal = (debts) => {
+    let totalunPaidDebts = 0;
+
+    debts.forEach((debt) => {
+      // Check if debt is unpaid (pending) and the debt date matches the selected date
+      if (debt.status === 'pending' && debt.date) {
+        totalunPaidDebts += Number(debt.amount) || 0;
+      }
+    });
+
+    return totalunPaidDebts;
+  };
+  // Calculate the totals for debts filtered by the selected date
+  const totalPaidDebts = calculatePaidDebtsTotal(debts,);
+  const totalunPaidDebts = calculateunPaidDebtsTotal(debts,);
+
+
+
+  const calculateTotalsOutofstock = (outofstock) => {
+    let totalOutofstock = 0;
+    let totalOutPrice = 0;
+
+    outofstock.forEach((entry) => {
+      totalOutPrice += Number(entry.total_price) || 0;
+      totalOutofstock += Number(entry.price) || 0;
+    });
+
+    const profit = totalOutPrice - totalOutofstock;
+
+    return {
+      totalOutPrice,
+      totalOutofstock,
+      profit,
+    };
+  };
+
+  const totalsOut = calculateTotalsOutofstock(filteredOutofstock);
+
+
+
+
+  const calculateTotalssss = (entries, entriess, entriesss,debts,
+    outofstock,) => {
     let totalSalesPrice = 0;
     let totalBannerStickerPrice = 0;
     let totalExpenses = 0;
+    let totalPaidDebts = 0;
+    let totalOutPrice = 0;
+    let totalunPaidDebts = 0;
 
     entries.forEach((entry) => {
       totalSalesPrice += Number(entry.total_price) || 0;
@@ -239,14 +355,36 @@ export const CustomersTable = (props) => {
       totalExpenses += Number(entry.expenses) || 0;
     });
 
+    outofstock.forEach((entry) => {
+      totalOutPrice += Number(entry.price) || 0;
+    });
+
+    debts.forEach((debt) => {
+      if (debt.status === 'paid') {
+        totalPaidDebts += Number(debt.amount) || 0;
+      }
+    });
+
+    debts.forEach((debt) => {
+      if (debt.status === 'pending') {
+        totalunPaidDebts += Number(debt.amount) || 0;
+      }
+    });
+
     const totalProfit =
-      totalSalesPrice + totalBannerStickerPrice - totalExpenses;
+      totalSalesPrice + 
+      totalBannerStickerPrice +
+      totalOutPrice -
+      totalExpenses;
 
     return {
       totalSalesPrice,
       totalBannerStickerPrice,
       totalExpenses,
       totalProfit,
+      totalOutPrice,
+      totalPaidDebts,
+      totalunPaidDebts,
     };
   };
 
@@ -254,6 +392,8 @@ export const CustomersTable = (props) => {
     filteredEntries,
     filteredEntriess,
     filteredEntriesss,
+    filteredDebts,
+    filteredOutofstock,
   );
 
   return (
@@ -293,6 +433,8 @@ export const CustomersTable = (props) => {
           {startDate && endDate ? (
             filteredEntries.length > 0 ||
             filteredEntriess.length > 0 ||
+            filteredOutofstock.length > 0 ||
+            filteredDebts.length > 0 ||
             filteredEntriesss.length > 0 ? (
               <>
                 <CardContent>
@@ -310,7 +452,7 @@ export const CustomersTable = (props) => {
                                 flexDirection: 'row',
                               }}
                             >
-                              Sales
+                              Stock Sales
                             </Typography>
                             <TableRow>
                               <TableCell>USERNAME</TableCell>
@@ -384,6 +526,53 @@ export const CustomersTable = (props) => {
                                 flexDirection: 'row',
                               }}
                             >
+                              Non Stock Sales
+                            </Typography>
+                            <TableRow>
+                              <TableCell>USERNAME</TableCell>
+                              <TableCell>DATE</TableCell>
+                              <TableCell> NAME</TableCell>
+                              <TableCell>PRICE</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {filteredOutofstock.map((entry) => {
+                              return (
+                                <TableRow>
+                                  <TableCell>
+                                    {entry.user ? entry.user : 'N/A'}
+                                  </TableCell>
+                                  <TableCell>{entry.date}</TableCell>
+                                  <TableCell>{entry.name}</TableCell>
+                                  <TableCell>
+                                    {formatCurrency(entry.price) || 0}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Scrollbar>
+                  </Card>
+                </CardContent>
+
+
+                <CardContent>
+                  <Card>
+                    <Scrollbar>
+                      <Box sx={{ minWidth: 800 }}>
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
                               Expenses
                             </Typography>
                             <TableRow>
@@ -415,7 +604,80 @@ export const CustomersTable = (props) => {
                   </Card>
                 </CardContent>
 
-                
+                <CardContent>
+                  <Card>
+                    <Scrollbar>
+                      <Box sx={{ minWidth: 800 }}>
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              Debts
+                            </Typography>
+                            <TableRow>
+                              <TableCell>Stock Name</TableCell>
+                              <TableCell>Customer Name</TableCell>
+                              <TableCell>Amount</TableCell>
+                              <TableCell>Date</TableCell>
+                              <TableCell>Status</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {filteredDebts.slice(0, 5).map((debt) => {
+                              const createdAt = format(
+                                new Date(debt.date),
+                                'dd/MM/yyyy',
+                              );
+                              return (
+                                <TableRow hover key={debt.id}>
+                                  <TableCell>{debt.stock_name}</TableCell>
+                                  <TableCell>{debt.debtor_name}</TableCell>
+                                  <TableCell>
+                                    {formatCurrency(debt.amount)}
+                                  </TableCell>
+                                  <TableCell>{createdAt}</TableCell>
+                                  <TableCell>
+                                    <SeverityPill
+                                      color={statusMap[debt.status]}
+                                    >
+                                      {debt.status}
+                                    </SeverityPill>
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>TOTAL PAID DEBTS</TableCell>
+                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell>
+                                {formatCurrency(totalPaidDebts)}
+                              </TableCell>{' '}
+                              {/* Total Paid Debts */}
+                              <TableCell>
+                                {formatCurrency(totalunPaidDebts)}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Scrollbar>
+                  </Card>
+                </CardContent>
 
                 <CardContent>
                   <Scrollbar>
@@ -435,9 +697,10 @@ export const CustomersTable = (props) => {
                           </Typography>
                           <TableRow>
                             <TableCell>TOTAL SALES</TableCell>
+                            <TableCell>TOTAL NON STOCK SALES</TableCell>
                             <TableCell>TOTAL BANNER/STICKER SALES</TableCell>
                             <TableCell>TOTAL EXPENSES</TableCell>
-                            <TableCell>PROFIT MADE</TableCell>
+                            {/* <TableCell>PROFIT MADE</TableCell> */}
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -446,17 +709,52 @@ export const CustomersTable = (props) => {
                               {formatCurrency(totals.totalSalesPrice)}
                             </TableCell>
                             <TableCell>
+                                {formatCurrency(totalsOut.totalOutofstock)}
+                              </TableCell>
+                            <TableCell>
                               {formatCurrency(totalss.totalBannerStickerPrice)}
                             </TableCell>
                             <TableCell>
                               {formatCurrency(totalsss.totalExpenses)}
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                               {formatCurrency(totalssss.totalProfit)}
-                            </TableCell>
+                            </TableCell> */}
                           </TableRow>
                         </TableBody>
                       </Table>
+                      
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              Weekly Profit
+                            </Typography>
+                            <TableRow>
+                              <TableCell>PROFIT MADE</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell>
+                                {/* Profit formula that adds sales and paid debts and subtracts expenses */}
+                                {formatCurrency(
+                                  totalssss.totalSalesPrice +
+                                    totalssss.totalBannerStickerPrice +
+                                    totalsOut.totalOutofstock -
+                                    totalssss.totalExpenses,
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
                     </Box>
                   </Scrollbar>
                 </CardContent>

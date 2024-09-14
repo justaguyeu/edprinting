@@ -148,7 +148,7 @@ export const CustomersTable = (props) => {
                               flexDirection: 'row',
                             }}
                           >
-                            Sales
+                             Stock Sales
                           </Typography>
                           <TableRow>
                             <TableCell>Date</TableCell>

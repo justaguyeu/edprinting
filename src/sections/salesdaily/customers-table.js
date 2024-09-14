@@ -333,7 +333,6 @@ export const CustomersTable = (props) => {
 
     return totalPaidDebts;
   };
-
   const calculateunPaidDebtsTotal = (debts, selectedDate) => {
     let totalunPaidDebts = 0;
 
@@ -346,7 +345,6 @@ export const CustomersTable = (props) => {
 
     return totalunPaidDebts;
   };
-
   // Calculate the totals for debts filtered by the selected date
   const totalPaidDebts = calculatePaidDebtsTotal(debts, selectedDate);
   const totalunPaidDebts = calculateunPaidDebtsTotal(debts, selectedDate);
@@ -389,7 +387,7 @@ export const CustomersTable = (props) => {
     });
 
     debts.forEach((debt) => {
-      if (debt.status === 'paid') {
+      if (debt.status === 'pending') {
         totalunPaidDebts += Number(debt.amount) || 0;
       }
     });
@@ -668,6 +666,25 @@ export const CustomersTable = (props) => {
                             })}
                           </TableBody>
                         </Table>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>TOTAL PAID DEBTS</TableCell>
+                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell>
+                                {formatCurrency(totalPaidDebts)}
+                              </TableCell>{' '}
+                              {/* Total Paid Debts */}
+                              <TableCell>
+                                {formatCurrency(totalunPaidDebts)}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
                       </Box>
                     </Scrollbar>
                   </Card>
@@ -693,6 +710,7 @@ export const CustomersTable = (props) => {
                               <TableCell>TOTAL STOCK SALES</TableCell>
                               <TableCell>TOTAL NON STOCK SALES</TableCell>
                               <TableCell>TOTAL BANNER/STICKER SALES</TableCell>
+                              <TableCell>TOTAL EXPENSES</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -708,33 +726,13 @@ export const CustomersTable = (props) => {
                                   totalss.totalBannerStickerPrice,
                                 )}
                               </TableCell>
-                            </TableRow>
-                          </TableBody>
-                        </Table>
-                        <Table>
-                          <TableHead>
-                            
-                            <TableRow>
-                              <TableCell>TOTAL PAID DEBTS</TableCell>
-                              <TableCell>TOTAL UNPAID DEBTS</TableCell>
-                              <TableCell>TOTAL EXPENSES</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            <TableRow>
-                              <TableCell>
-                                {formatCurrency(totalPaidDebts)}
-                              </TableCell>{' '}
-                              {/* Total Paid Debts */}
-                              <TableCell>
-                                {formatCurrency(totalunPaidDebts)}
-                              </TableCell>
                               <TableCell>
                                 {formatCurrency(totalsss.totalExpenses)}
                               </TableCell>
                             </TableRow>
                           </TableBody>
                         </Table>
+                        
                         <Table>
                           <TableHead>
                             <Typography
@@ -759,10 +757,8 @@ export const CustomersTable = (props) => {
                                 {formatCurrency(
                                   totalssss.totalSalesPrice +
                                     totalssss.totalBannerStickerPrice +
-                                    totalsOut.totalOutofstock +
-                                    totalPaidDebts -
-                                    totalssss.totalExpenses -
-                                    totalunPaidDebts,
+                                    totalsOut.totalOutofstock -
+                                    totalssss.totalExpenses
                                 )}
                               </TableCell>
                             </TableRow>
