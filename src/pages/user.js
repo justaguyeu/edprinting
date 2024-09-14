@@ -490,8 +490,11 @@ const Page = () => {
   
   // Helper function to format numbers with commas
   const formatWithCommas = (value) => {
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas every three digits
-  };
+    if (typeof value === 'string') {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas every three digits
+    }
+    return value; // Return as-is if not a string
+};
   return (
     <>
       <Head>

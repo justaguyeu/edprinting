@@ -56,6 +56,7 @@ export const CustomersTable = (props) => {
           headers: { Authorization: `Bearer ${token}` },
           params: { month },
         });
+        console.log(response.data)
 
         setDailyTotals(response.data.daily_totals);
         setMonthlyTotals(response.data.monthly_totals);
@@ -148,13 +149,14 @@ export const CustomersTable = (props) => {
                               flexDirection: 'row',
                             }}
                           >
-                             Stock Sales
+                             All Sales{}(Day Totals)
                           </Typography>
                           <TableRow>
                             <TableCell>Date</TableCell>
-                            <TableCell>TOTAL DAILY PRICE</TableCell>
-                            <TableCell>TOTAL DAILY EXPENSES</TableCell>
-                            <TableCell>TOTAL DAILY PROFIT</TableCell>
+                            <TableCell> DAILY STOCK</TableCell>
+                            <TableCell> DAILY NON STOCK</TableCell>
+                            <TableCell>DAILY EXPENSES</TableCell>
+                            <TableCell>DAILY PROFIT</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -164,6 +166,9 @@ export const CustomersTable = (props) => {
                                 <TableCell>{total.date}</TableCell>
                                 <TableCell>
                                   {formatCurrency(total.total_sales)}
+                                </TableCell>
+                                <TableCell>
+                                  {formatCurrency(total.total_outofstock)}
                                 </TableCell>
                                 <TableCell>
                                   {formatCurrency(total.total_expenses)}
@@ -180,6 +185,8 @@ export const CustomersTable = (props) => {
                   </Scrollbar>
                 </Card>
               </CardContent>
+
+              
 
               <CardContent>
                 <Scrollbar>
@@ -198,7 +205,8 @@ export const CustomersTable = (props) => {
                           Monthly Totals
                         </Typography>
                         <TableRow>
-                          <TableCell>TOTAL MONTHLY PRICE</TableCell>
+                          <TableCell>TOTAL MONTHLY STOCK SALES</TableCell>
+                          <TableCell>TOTAL MONTHLY NON STOCK SALES</TableCell>
                           <TableCell>TOTAL MONTHLY EXPENSES</TableCell>
                           <TableCell>TOTAL MONTHLY PROFIT</TableCell>
                         </TableRow>
@@ -207,6 +215,9 @@ export const CustomersTable = (props) => {
                         <TableRow>
                           <TableCell>
                             {formatCurrency(monthlyTotals.total_sales)}
+                          </TableCell>
+                          <TableCell>
+                            {formatCurrency(monthlyTotals.total_outofstock)}
                           </TableCell>
                           <TableCell>
                             {formatCurrency(monthlyTotals.total_expenses)}
