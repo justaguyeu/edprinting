@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
+// import { subDays, subHours } from 'date-fns';
 import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewBudget } from 'src/sections/overview/overview-budget';
@@ -13,6 +13,7 @@ import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../api';
+import { format, startOfWeek, endOfWeek, addWeeks, subDays } from 'date-fns';
 
 const now = new Date();
 const refreshToken = async () => {
@@ -51,8 +52,25 @@ const Page = () => {
   useEffect(() => {
     const fetchWeeklyReport = async () => {
       const token = localStorage.getItem('access_token');
-      const startDate = '2024-09-09'; 
-      const endDate = '2024-09-15'; 
+
+      // Get today's date
+      const today = new Date();
+
+      let startOfWeekDate, endOfWeekDate;
+
+      // If today is Monday, fetch the report for the previous week (Monday to Sunday)
+      if (today.getDay() === 1) { // Monday
+        startOfWeekDate = startOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Previous week's Monday
+        endOfWeekDate = endOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Previous week's Sunday
+      } else {
+        // Otherwise, fetch the report for the current week (Monday to Sunday)
+        startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
+        endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
+      }
+
+      // Format the dates to 'YYYY-MM-DD'
+      const startDate = format(startOfWeekDate, 'yyyy-MM-dd');
+      const endDate = format(endOfWeekDate, 'yyyy-MM-dd');
 
       if (token) {
         try {
@@ -75,6 +93,7 @@ const Page = () => {
         console.error('No token found');
       }
     };
+
     fetchWeeklyReport();
   }, []);
 
