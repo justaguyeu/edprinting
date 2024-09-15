@@ -51,8 +51,8 @@ const Page = () => {
   useEffect(() => {
     const fetchWeeklyReport = async () => {
       const token = localStorage.getItem('access_token');
-      const startDate = '2024-09-01'; // Example start date, replace with dynamic value
-      const endDate = '2024-09-07'; // Example end date, replace with dynamic value
+      const startDate = '2024-09-09'; 
+      const endDate = '2024-09-15'; 
 
       if (token) {
         try {

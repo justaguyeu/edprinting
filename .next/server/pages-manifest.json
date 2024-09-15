@@ -2,8 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/salesmonthly": "pages/salesmonthly.js",
-  "/salesdaily": "pages/salesdaily.js",
-  "/404": "pages/404.js"
+  "/auth/login": "pages/auth/login.js",
+  "/": "pages/index.js"
 }
