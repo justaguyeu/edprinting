@@ -2,7 +2,9 @@ import PropTypes from 'prop-types';
 import BellIcon from '@heroicons/react/24/solid/BellIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import Bars3Icon from '@heroicons/react/24/solid/Bars3Icon';
+import React, { useState, useEffect } from 'react';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
+
 import {
   Avatar,
   Badge,
@@ -11,6 +13,8 @@ import {
   Stack,
   SvgIcon,
   Tooltip,
+  Popover,
+  Typography,
   useMediaQuery,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
@@ -20,10 +24,81 @@ import { AccountPopover } from './account-popover';
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
 
+const NotificationPanel = ({ notifications }) => {
+  if (notifications.length === 0) {
+    return   <h6>No new notifications</h6>;
+  }
+
+  return (
+    <Box >
+      {notifications.map((notification, index) => (
+        <Typography key={index}>{notification.message}</Typography>
+      ))}
+    </Box>
+  );
+};
+
 export const TopNav = (props) => {
   const { onNavOpen } = props;
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const accountPopover = usePopover();
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // useEffect(() => {
+  //   // Function to fetch notifications
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const response = await axios.get('/api/notifications/');
+  //       const { notifications } = response.data;
+  //       setNotifications(notifications);
+  //       setUnreadCount(notifications.length); // Set unread count to number of notifications
+  //     } catch (error) {
+  //       console.error('Error fetching notifications:', error);
+  //     }
+  //   };
+
+  //   // Fetch notifications when component mounts
+  //   fetchNotifications();
+
+  //   // Optionally, you can set up polling to fetch notifications periodically
+  //   const interval = setInterval(fetchNotifications, 60000); // Poll every 1 minute
+  //   return () => clearInterval(interval); // Cleanup on unmount
+  // }, []);
+  useEffect(() => {
+    // Function to fetch notifications
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get('/api/notifications/');
+        setNotifications(response.data.notifications);
+        setUnreadCount(response.data.notifications.length);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    // Fetch notifications when component mounts
+    fetchNotifications();
+
+    // Optionally, you can set up polling to fetch notifications periodically
+    const interval = setInterval(fetchNotifications, 60000); // Poll every 1 minute
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+  
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    setUnreadCount(0); // Mark as read
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'notification-popover' : undefined;
 
   return (
     <>
@@ -78,20 +153,33 @@ export const TopNav = (props) => {
                 </SvgIcon>
               </IconButton>
             </Tooltip> */}
-            <Tooltip title="Notifications">
-              <IconButton>
-                <Badge badgeContent={4} color="success" variant="dot"
-                sx={{
-                  color: 'error.main',
-                 
-                }}
-                >
+            <Tooltip 
+            // title="Notifications"
+            >
+              <IconButton onClick={handleClick}>
+                <Badge badgeContent={unreadCount} color="success" variant="dot">
                   <SvgIcon fontSize="small">
-                    <BellIcon/>
+                    <BellIcon />
                   </SvgIcon>
                 </Badge>
               </IconButton>
             </Tooltip>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              <NotificationPanel notifications={notifications} />
+            </Popover>
             <Avatar
               onClick={accountPopover.handleOpen}
               ref={accountPopover.anchorRef}
