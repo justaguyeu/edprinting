@@ -8,6 +8,7 @@ import { OverviewLatestProducts } from 'src/sections/overview/overview-latest-pr
 import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
 import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
+import { OverviewTotalDebts } from 'src/sections/overview/overview-total-debts';
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
 import React, { useState, useEffect } from 'react';
@@ -79,6 +80,7 @@ const Page = () => {
             headers: { Authorization: `Bearer ${token}` },
             params: { start_date: startDate, end_date: endDate },
           });
+          console.log(response.data)
           setWeeklyTotals(response.data.weekly_totals);
           setDailyTotals(response.data.daily_totals);
           setLoading(false);
@@ -96,6 +98,66 @@ const Page = () => {
 
     fetchWeeklyReport();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchWeeklyReport = async () => {
+  //     const token = localStorage.getItem('access_token');
+  
+  //     // Get today's date
+  //     const today = new Date();
+  
+  //     let startOfWeekDate, endOfWeekDate;
+  
+  //     // Check if today is Monday or another day
+  //     if (today.getDay() === 1) { // If today is Monday
+  //       // Start a new week from today (Monday)
+  //       startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
+  //       endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
+  //     } else {
+  //       // Otherwise, fetch the report for the current week
+  //       startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
+  //       endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
+  //     }
+  
+  //     // Format the dates to 'YYYY-MM-DD'
+  //     const startDate = format(startOfWeekDate, 'yyyy-MM-dd');
+  //     const endDate = format(endOfWeekDate, 'yyyy-MM-dd');
+  
+  //     if (token) {
+  //       try {
+  //         setLoading(true);
+  //         const response = await axios.get(`${BASE_URL}/data/weekly/`, {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //           params: { start_date: startDate, end_date: endDate },
+  //         });
+          
+  //         // Check if we are at the beginning of a new week (Monday)
+  //         if (today.getDay() === 1) { 
+  //           // If it's Monday, reset the weekly totals
+  //           setWeeklyTotals(0);
+  //           setDailyTotals([]);
+  //         } else {
+  //           // Otherwise, load the data as usual
+  //           setWeeklyTotals(response.data.weekly_totals);
+  //           setDailyTotals(response.data.daily_totals);
+  //         }
+  
+  //         setLoading(false);
+  //       } catch (error) {
+  //         console.error(
+  //           'Error fetching weekly report:',
+  //           error.response ? error.response.data : error.message,
+  //         );
+  //         setLoading(false);
+  //       }
+  //     } else {
+  //       console.error('No token found');
+  //     }
+  //   };
+  
+  //   fetchWeeklyReport();
+  // }, []);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -185,6 +247,14 @@ const Page = () => {
                 positive={false}
                 sx={{ height: '100%' }}
                 value={formatCurrency(weeklyTotals.total_expenses)}
+              />
+            </Grid>
+            <Grid xs={12} sm={6} lg={4}>
+              <OverviewTotalDebts
+                difference={16}
+                positive={false}
+                sx={{ height: '100%' }}
+                value={formatCurrency(weeklyTotals.total_debts)}
               />
             </Grid>
             {/* <Grid
