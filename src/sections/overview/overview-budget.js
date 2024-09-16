@@ -25,7 +25,7 @@ export const OverviewBudget = (props) => {
         >
           <Stack spacing={1}>
             <Typography color="text.secondary" variant="overline">
-              Weekly sales
+              Weekly Stock Sales
               <Avatar
                 sx={{
                   backgroundColor: 'error.main',
