@@ -50,79 +50,29 @@ const Page = () => {
   const [chartSeries, setChartSeries] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchWeeklyReport = async () => {
-      const token = localStorage.getItem('access_token');
-
-      // Get today's date
-      const today = new Date();
-
-      let startOfWeekDate, endOfWeekDate;
-
-      // If today is Monday, fetch the report for the previous week (Monday to Sunday)
-      if (today.getDay() === 1) { // Monday
-        startOfWeekDate = startOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Previous week's Monday
-        endOfWeekDate = endOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Previous week's Sunday
-      } else {
-        // Otherwise, fetch the report for the current week (Monday to Sunday)
-        startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
-        endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
-      }
-
-      // Format the dates to 'YYYY-MM-DD'
-      const startDate = format(startOfWeekDate, 'yyyy-MM-dd');
-      const endDate = format(endOfWeekDate, 'yyyy-MM-dd');
-
-      if (token) {
-        try {
-          setLoading(true);
-          const response = await axios.get(`${BASE_URL}/data/weekly/`, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { start_date: startDate, end_date: endDate },
-          });
-          console.log(response.data)
-          setWeeklyTotals(response.data.weekly_totals);
-          setDailyTotals(response.data.daily_totals);
-          setLoading(false);
-        } catch (error) {
-          console.error(
-            'Error fetching weekly report:',
-            error.response ? error.response.data : error.message,
-          );
-          setLoading(false);
-        }
-      } else {
-        console.error('No token found');
-      }
-    };
-
-    fetchWeeklyReport();
-  }, []);
-
   // useEffect(() => {
   //   const fetchWeeklyReport = async () => {
   //     const token = localStorage.getItem('access_token');
-  
+
   //     // Get today's date
   //     const today = new Date();
-  
+
   //     let startOfWeekDate, endOfWeekDate;
-  
-  //     // Check if today is Monday or another day
-  //     if (today.getDay() === 1) { // If today is Monday
-  //       // Start a new week from today (Monday)
-  //       startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
-  //       endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
+
+  //     // If today is Monday, fetch the report for the previous week (Monday to Sunday)
+  //     if (today.getDay() === 1) { // Monday
+  //       startOfWeekDate = startOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Previous week's Monday
+  //       endOfWeekDate = endOfWeek(subDays(today, 7), { weekStartsOn: 1 }); // Previous week's Sunday
   //     } else {
-  //       // Otherwise, fetch the report for the current week
+  //       // Otherwise, fetch the report for the current week (Monday to Sunday)
   //       startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
   //       endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
   //     }
-  
+
   //     // Format the dates to 'YYYY-MM-DD'
   //     const startDate = format(startOfWeekDate, 'yyyy-MM-dd');
   //     const endDate = format(endOfWeekDate, 'yyyy-MM-dd');
-  
+
   //     if (token) {
   //       try {
   //         setLoading(true);
@@ -130,18 +80,9 @@ const Page = () => {
   //           headers: { Authorization: `Bearer ${token}` },
   //           params: { start_date: startDate, end_date: endDate },
   //         });
-          
-  //         // Check if we are at the beginning of a new week (Monday)
-  //         if (today.getDay() === 1) { 
-  //           // If it's Monday, reset the weekly totals
-  //           setWeeklyTotals(0);
-  //           setDailyTotals([]);
-  //         } else {
-  //           // Otherwise, load the data as usual
-  //           setWeeklyTotals(response.data.weekly_totals);
-  //           setDailyTotals(response.data.daily_totals);
-  //         }
-  
+  //         console.log(response.data)
+  //         setWeeklyTotals(response.data.weekly_totals);
+  //         setDailyTotals(response.data.daily_totals);
   //         setLoading(false);
   //       } catch (error) {
   //         console.error(
@@ -154,9 +95,68 @@ const Page = () => {
   //       console.error('No token found');
   //     }
   //   };
-  
+
   //   fetchWeeklyReport();
   // }, []);
+
+  useEffect(() => {
+    const fetchWeeklyReport = async () => {
+      const token = localStorage.getItem('access_token');
+  
+      // Get today's date
+      const today = new Date();
+  
+      let startOfWeekDate, endOfWeekDate;
+  
+      // Check if today is Monday or another day
+      if (today.getDay() === 1) { // If today is Monday
+        // Start a new week from today (Monday)
+        startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
+        endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
+      } else {
+        // Otherwise, fetch the report for the current week
+        startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // Current week's Monday
+        endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 }); // Current week's Sunday
+      }
+  
+      // Format the dates to 'YYYY-MM-DD'
+      const startDate = format(startOfWeekDate, 'yyyy-MM-dd');
+      const endDate = format(endOfWeekDate, 'yyyy-MM-dd');
+  
+      if (token) {
+        try {
+          setLoading(true);
+          const response = await axios.get(`${BASE_URL}/data/weekly/`, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { start_date: startDate, end_date: endDate },
+          });
+          
+          // Check if we are at the beginning of a new week (Monday)
+          if (today.getDay() === 1) { 
+            // If it's Monday, reset the weekly totals
+            setWeeklyTotals(0);
+            setDailyTotals([]);
+          } else {
+            // Otherwise, load the data as usual
+            setWeeklyTotals(response.data.weekly_totals);
+            setDailyTotals(response.data.daily_totals);
+          }
+  
+          setLoading(false);
+        } catch (error) {
+          console.error(
+            'Error fetching weekly report:',
+            error.response ? error.response.data : error.message,
+          );
+          setLoading(false);
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+  
+    fetchWeeklyReport();
+  }, []);
   
 
   useEffect(() => {
