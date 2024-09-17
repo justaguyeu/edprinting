@@ -85,7 +85,7 @@ eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   BASE_URL: () => (/* binding */ BASE_URL)\n/* harmony export */ });\n// config.js\nconst BASE_URL = \"https://edsalesbackend.onrender.com\" // export const BASE_URL = 'http://127.0.0.1:8000'\n;\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvYXBpLmpzIiwibWFwcGluZ3MiOiI7Ozs7QUFBQSxZQUFZO0FBQ0wsTUFBTUEsV0FBVyxzQ0FFeEIsa0RBQWtEO0NBRlciLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9lZHByaW50aW5nLy4vc3JjL2FwaS5qcz9kY2FmIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIGNvbmZpZy5qc1xuZXhwb3J0IGNvbnN0IEJBU0VfVVJMID0gJ2h0dHBzOi8vZWRzYWxlc2JhY2tlbmQub25yZW5kZXIuY29tJ1xuXG4vLyBleHBvcnQgY29uc3QgQkFTRV9VUkwgPSAnaHR0cDovLzEyNy4wLjAuMTo4MDAwJ1xuIl0sIm5hbWVzIjpbIkJBU0VfVVJMIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/api.js\n");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   BASE_URL: () => (/* binding */ BASE_URL)\n/* harmony export */ });\n// config.js\n// export const BASE_URL = 'https://edsalesbackend.onrender.com'\nconst BASE_URL = \"http://127.0.0.1:8000\";\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvYXBpLmpzIiwibWFwcGluZ3MiOiI7Ozs7QUFBQSxZQUFZO0FBQ1osZ0VBQWdFO0FBRXpELE1BQU1BLFdBQVcsd0JBQXVCIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vZWRwcmludGluZy8uL3NyYy9hcGkuanM/ZGNhZiJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBjb25maWcuanNcbi8vIGV4cG9ydCBjb25zdCBCQVNFX1VSTCA9ICdodHRwczovL2Vkc2FsZXNiYWNrZW5kLm9ucmVuZGVyLmNvbSdcblxuZXhwb3J0IGNvbnN0IEJBU0VfVVJMID0gJ2h0dHA6Ly8xMjcuMC4wLjE6ODAwMCdcbiJdLCJuYW1lcyI6WyJCQVNFX1VSTCJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./src/api.js\n");
 
 /***/ }),
 
@@ -689,4 +689,7 @@ module.exports = require("zlib");
 var __webpack_require__ = require("../../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/next","vendor-chunks/@swc","vendor-chunks/@mui","vendor-chunks/@babel","vendor-chunks/simplebar-react"], () => (__webpack_exec__("./node_modules/next/dist/
+var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/next","vendor-chunks/@swc","vendor-chunks/@mui","vendor-chunks/@babel","vendor-chunks/simplebar-react"], () => (__webpack_exec__("./node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js?kind=PAGES&page=%2Fauth%2Flogin&preferredRegion=&absolutePagePath=.%2Fsrc%5Cpages%5Cauth%5Clogin.js&absoluteAppPath=private-next-pages%2F_app&absoluteDocumentPath=private-next-pages%2F_document&middlewareConfigBase64=e30%3D!")));
+module.exports = __webpack_exports__;
+
+})();
