@@ -43,7 +43,7 @@ const handleClick = () => {
         try {
           const response = await axios.get(`${BASE_URL}/debts/`, {
             headers: { Authorization: `Bearer ${token}` },
-          });
+          }); 
           setDebts(response.data);
         } catch (error) {
           console.error(

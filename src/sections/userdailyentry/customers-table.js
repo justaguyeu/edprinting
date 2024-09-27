@@ -52,6 +52,8 @@ export const CustomersTable = (props) => {
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [filteredEntriess, setFilteredEntriess] = useState([]);
   const [filteredEntriesss, setFilteredEntriesss] = useState([]);
+  const [filteredOutofstock, setFilteredOutofstock] = useState([]);
+  const [outofstock, setOutofstock] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editData, setEditData] = useState({});
@@ -131,6 +133,32 @@ export const CustomersTable = (props) => {
   }, []);
 
   useEffect(() => {
+    const fetchOutofstock = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          setLoading(true);
+          const response = await axios.get(`${BASE_URL}/api/dataoutofstock/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log(response.data)
+          setOutofstock(response.data);
+          setLoading(false);
+        } catch (error) {
+          console.error(
+            'Error fetching data:',
+            error.response ? error.response.data : error.message,
+          );
+          setLoading(false);
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+    fetchOutofstock();
+  }, []);
+
+  useEffect(() => {
     if (selectedDate) {
       const filtered = entries.filter((entry) => entry.date === selectedDate);
       setFilteredEntries(filtered);
@@ -156,6 +184,18 @@ export const CustomersTable = (props) => {
       setFilteredEntriess([]);
     }
   }, [selectedDate, entriess]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      const filtered = outofstock.filter(
+        (entry) => entry.date === selectedDate,
+      );
+      setFilteredOutofstock(filtered);
+    } else {
+      setFilteredOutofstock([]);
+    }
+  }, [selectedDate, outofstock]);
+
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -240,6 +280,15 @@ export const CustomersTable = (props) => {
       console.error('No token found');
     }
   };
+
+  const handleOpenEditModal = (entry) => {
+    setEditData({
+      date: entry.date,
+      item_name: entry.expense_name,
+      quantity: entry.expenses,
+    });
+    setOpenEditModal(true); // Open the modal
+  };
   
 
 
@@ -263,6 +312,7 @@ export const CustomersTable = (props) => {
           {selectedDate ? (
             filteredEntries.length > 0 ||
             filteredEntriess.length > 0 ||
+            filteredOutofstock.length > 0 ||
             filteredEntriesss.length > 0 ? (
               <>
                 <>
@@ -359,6 +409,47 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     </Card>
                   </CardContent>
                   <CardContent>
+                  <Card>
+                    <Scrollbar>
+                      <Box sx={{ minWidth: 800 }}>
+                        <Table>
+                          <TableHead>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                p: 2,
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                              }}
+                            >
+                              Non Stock Sales
+                            </Typography>
+                            <TableRow>
+                              <TableCell>DATE</TableCell>
+                              <TableCell> NAME</TableCell>
+                              <TableCell>PRICE</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {filteredOutofstock.map((entry) => {
+                              return (
+                                <TableRow>
+                                  <TableCell>{entry.date}</TableCell>
+                                  <TableCell>{entry.name}</TableCell>
+                                  <TableCell>
+                                    {formatCurrency(entry.price) || 0}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Scrollbar>
+                  </Card>
+                </CardContent>
+                  <CardContent>
                     <Card>
                       <Scrollbar>
                         <Box sx={{ minWidth: 800 }}>
@@ -396,12 +487,18 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                                     </TableCell>
                                     <TableCell>
                                       {/* Add Edit Button */}
-                                      <Button
+                                      {filteredEntriesss.map((entry) => (
+  <Button key={entry.id} onClick={() => handleOpenEditModal(entry)}>
+    Edit
+  </Button>
+))}
+
+                                      {/* <Button
                                         variant="outlined"
-                                        // onClick={() => handleEdit(entry)}
+                                        onClick={() => handleEdit(entry)}
                                       >
                                         Edit
-                                      </Button>
+                                      </Button> */}
                                     </TableCell>
                                   </TableRow>
                                 );
@@ -417,10 +514,10 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                   open={openEditModal}
                   onClose={() => setOpenEditModal(false)}
                 >
-                  <DialogTitle>Edit Entry</DialogTitle>
+                  <DialogTitle>Edit Expense</DialogTitle>
                   <DialogContent>
                     <TextField
-                      label="Item Name"
+                      label="Expense Name"
                       name="item_name"
                       value={editData.item_name || ''}
                       onChange={handleEditChange}
@@ -428,29 +525,14 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                       margin="normal"
                     />
                     <TextField
-                      label="Quantity"
+                      label="Expense Price"
                       name="quantity"
                       value={editData.quantity || ''}
                       onChange={handleEditChange}
                       fullWidth
                       margin="normal"
                     />
-                    <TextField
-                      label="Total Price"
-                      name="total_price"
-                      value={editData.total_price || ''}
-                      onChange={handleEditChange}
-                      fullWidth
-                      margin="normal"
-                    />
-                    <TextField
-                      label="Discount Price"
-                      name="discount_price"
-                      value={editData.discount_price || ''}
-                      onChange={handleEditChange}
-                      fullWidth
-                      margin="normal"
-                    />
+                    
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={() => setOpenEditModal(false)}>

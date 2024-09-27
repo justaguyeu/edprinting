@@ -13,7 +13,6 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TextField,
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { SeverityPill } from 'src/components/severity-pill';
@@ -28,12 +27,7 @@ const statusMap = {
 
 const Page = () => {
   const [filteredDebts, setFilteredDebts] = useState([]);
-  // const [startDate, setStartDate] = useState('');
-  // const [endDate, setEndDate] = useState('');
-
   const [entries, setDebts] = useState([]);
-  const [entriess, setEntriess] = useState([]);
-  const [entriesss, setEntriesss] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,17 +36,22 @@ const Page = () => {
     const fetchEntries = async () => {
       const token = localStorage.getItem('access_token');
       if (token) {
+        setLoading(true);
         try {
           const response = await axios.get(`${BASE_URL}/debts/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          setDebts(response.data);
-          setFilteredDebts(response.data);
+          // Ensure the data is an array
+          const data = Array.isArray(response.data) ? response.data : [];
+          setDebts(data);
+          setFilteredDebts(data);
         } catch (error) {
           console.error(
             'Error fetching data:',
             error.response ? error.response.data : error.message,
           );
+        } finally {
+          setLoading(false);
         }
       } else {
         console.error('No token found');
@@ -87,23 +86,6 @@ const Page = () => {
 
   return (
     <Card>
-      {/* <Box sx={{ p: 2 }}>
-        <TextField
-          type="date"
-          label="Start Date"
-          onChange={(e) => setStartDate(e.target.value)}
-          sx={{ mr: 2 }}
-        />
-        <TextField
-          type="date"
-          label="End Date"
-          onChange={(e) => setEndDate(e.target.value)}
-          sx={{ mr: 2 }}
-        />
-        <Button onClick={filterDebtsByDate} variant="contained">
-          Filter
-        </Button>
-      </Box> */}
       <Box
         spacing={3}
         sx={{
@@ -205,6 +187,7 @@ const Page = () => {
     </Card>
   );
 };
+
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
