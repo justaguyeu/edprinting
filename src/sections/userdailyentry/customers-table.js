@@ -57,6 +57,7 @@ export const CustomersTable = (props) => {
   const [loading, setLoading] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editData, setEditData] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -67,7 +68,6 @@ export const CustomersTable = (props) => {
           const response = await axios.get(`${BASE_URL}/api/data/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          console.log(response.data)
           setEntries(response.data);
           setLoading(false);
         } catch (error) {
@@ -92,6 +92,7 @@ export const CustomersTable = (props) => {
           const response = await axios.get(`${BASE_URL}/api/data2/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+
           setEntriess(response.data);
           setLoading(false);
         } catch (error) {
@@ -141,7 +142,6 @@ export const CustomersTable = (props) => {
           const response = await axios.get(`${BASE_URL}/api/dataoutofstock/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          console.log(response.data)
           setOutofstock(response.data);
           setLoading(false);
         } catch (error) {
@@ -196,7 +196,6 @@ export const CustomersTable = (props) => {
     }
   }, [selectedDate, outofstock]);
 
-
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
@@ -212,9 +211,6 @@ export const CustomersTable = (props) => {
       .format(numericValue)
       .replace('TZS', 'Tsh');
   };
-
-
-
 
   // Handle Edit button click
   const handleEdit = (entry) => {
@@ -250,47 +246,184 @@ export const CustomersTable = (props) => {
   //   }}
   // };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      try {
-        const response = await axios.put(`${BASE_URL}/api/data/${editData.id}/`, editData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOpenEditModal(false);
-        // Update the entries state to reflect the edited data
-        setEntries((prevEntries) => prevEntries.map(entry => 
-          entry.id === editData.id ? response.data : entry
-        ));
-      } catch (error) {
-        if (error.response && error.response.data && error.response.data.error) {
-          alert(error.response.data.error);
-        } else {
-          console.error(
-            'Data submission failed:',
-            error.response ? error.response.data : error.message,
-          );
-        }
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      console.error('No token found');
+  // Add a state for the success message
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000); // Clear message after 5 seconds
+
+      return () => clearTimeout(timer); // Clear timeout if the component unmounts
     }
-  };
+  }, [successMessage]);
+  
+const handleSave = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setSuccessMessage(''); // Clear any previous messages
+
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    try {
+      console.log(editData.id);
+      const response = await axios.put(
+        `${BASE_URL}/api/dataexpense/${editData.id}/`,
+        editData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Fetch the updated data after saving
+      const fetchEntriesss = async () => {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+          try {
+            setLoading(true);
+            const response = await axios.get(`${BASE_URL}/api/dataexpense/`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            setEntriesss(response.data);
+            setLoading(false);
+
+            // Show success message after fetching data
+            setSuccessMessage('Expense was updated successfully!');
+          } catch (error) {
+            console.error(
+              'Error fetching data:',
+              error.response ? error.response.data : error.message
+            );
+            setLoading(false);
+          }
+        } else {
+          console.error('No token found');
+        }
+      };
+      fetchEntriesss();
+
+      // Close the edit modal
+      setOpenEditModal(false);
+
+      // Update local state if needed
+      setEntries((prevEntries) =>
+        prevEntries.map((entry) =>
+          entry.id === editData.id ? response.data : entry
+        )
+      );
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.error) {
+        alert(error.response.data.error);
+      } else {
+        console.error(
+          'Data submission failed:',
+          error.response ? error.response.data : error.message
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  } else {
+    console.error('No token found');
+  }
+};
+
+
+  // const handleSave = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   const token = localStorage.getItem('access_token');
+  //   if (token) {
+  //     try {
+  //       const response = await axios.put(
+  //         `${BASE_URL}/api/dataexpense/${editData.id}/`,
+  //         editData,
+  //         {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }
+  //       );
+
+  //       const fetchEntriesss = async () => {
+  //         const token = localStorage.getItem('access_token');
+  //         if (token) {
+  //           try {
+  //             setLoading(true);
+  //             const response = await axios.get(`${BASE_URL}/api/dataexpense/`, {
+  //               headers: { Authorization: `Bearer ${token}` },
+  //             });
+  //             setEntriesss(response.data);
+  //             setLoading(false);
+  //           } catch (error) {
+  //             console.error(
+  //               'Error fetching data:',
+  //               error.response ? error.response.data : error.message,
+  //             );
+  //             setLoading(false);
+  //           }
+  //         } else {
+  //           console.error('No token found');
+  //         }
+  //       };
+  //       fetchEntriesss();
+        
+        
+  //       setOpenEditModal(false);
+        
+        
+  //       if (editData.type === 'entries') {
+  //         setEntries((prevEntries) =>
+  //           prevEntries.map((entry) =>
+  //             entry.id === editData.id ? response.data : entry
+  //           )
+  //         );
+  //       } else if (editData.type === 'entriess') {
+  //         setEntriess((prevEntriess) =>
+  //           prevEntriess.map((entry) =>
+  //             entry.id === editData.id ? response.data : entry
+  //           )
+  //         );
+  //       } else if (editData.type === 'entriesss') {
+  //         setEntriesss((prevEntriesss) =>
+  //           prevEntriesss.map((entry) =>
+  //             entry.id === editData.id ? response.data : entry
+  //           )
+  //         );
+  //       }
+  
+        
+  
+  //     } catch (error) {
+  //       if (
+  //         error.response &&
+  //         error.response.data &&
+  //         error.response.data.error
+  //       ) {
+  //         alert(error.response.data.error);
+  //       } else {
+  //         console.error(
+  //           'Data submission failed:',
+  //           error.response ? error.response.data : error.message,
+  //         );
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   } else {
+  //     console.error('No token found');
+  //   }
+  // };
+  
+  
 
   const handleOpenEditModal = (entry) => {
     setEditData({
+      id: entry.id,
       date: entry.date,
-      item_name: entry.expense_name,
-      quantity: entry.expenses,
+      expense_name: entry.expense_name,
+      expenses: entry.expenses,
     });
     setOpenEditModal(true); // Open the modal
   };
-  
-
 
   return (
     <>
@@ -358,7 +491,6 @@ export const CustomersTable = (props) => {
                                     <TableCell>
                                       {formatCurrency(entry.discount_price)}
                                     </TableCell>
-                                    
                                   </TableRow>
                                 );
                               })}
@@ -409,46 +541,46 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     </Card>
                   </CardContent>
                   <CardContent>
-                  <Card>
-                    <Scrollbar>
-                      <Box sx={{ minWidth: 800 }}>
-                        <Table>
-                          <TableHead>
-                            <Typography
-                              variant="h6"
-                              sx={{
-                                p: 2,
-                                alignItems: 'center',
-                                display: 'flex',
-                                flexDirection: 'row',
-                              }}
-                            >
-                              Non Stock Sales
-                            </Typography>
-                            <TableRow>
-                              <TableCell>DATE</TableCell>
-                              <TableCell> NAME</TableCell>
-                              <TableCell>PRICE</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {filteredOutofstock.map((entry) => {
-                              return (
-                                <TableRow>
-                                  <TableCell>{entry.date}</TableCell>
-                                  <TableCell>{entry.name}</TableCell>
-                                  <TableCell>
-                                    {formatCurrency(entry.price) || 0}
-                                  </TableCell>
-                                </TableRow>
-                              );
-                            })}
-                          </TableBody>
-                        </Table>
-                      </Box>
-                    </Scrollbar>
-                  </Card>
-                </CardContent>
+                    <Card>
+                      <Scrollbar>
+                        <Box sx={{ minWidth: 800 }}>
+                          <Table>
+                            <TableHead>
+                              <Typography
+                                variant="h6"
+                                sx={{
+                                  p: 2,
+                                  alignItems: 'center',
+                                  display: 'flex',
+                                  flexDirection: 'row',
+                                }}
+                              >
+                                Non Stock Sales
+                              </Typography>
+                              <TableRow>
+                                <TableCell>DATE</TableCell>
+                                <TableCell> NAME</TableCell>
+                                <TableCell>PRICE</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {filteredOutofstock.map((entry) => {
+                                return (
+                                  <TableRow>
+                                    <TableCell>{entry.date}</TableCell>
+                                    <TableCell>{entry.name}</TableCell>
+                                    <TableCell>
+                                      {formatCurrency(entry.price) || 0}
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                        </Box>
+                      </Scrollbar>
+                    </Card>
+                  </CardContent>
                   <CardContent>
                     <Card>
                       <Scrollbar>
@@ -487,24 +619,39 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                                     </TableCell>
                                     <TableCell>
                                       {/* Add Edit Button */}
-                                      {filteredEntriesss.map((entry) => (
+                                      {/* {filteredEntriesss.map((entry) => (
   <Button key={entry.id} onClick={() => handleOpenEditModal(entry)}>
     Edit
   </Button>
-))}
+))} */}
 
-                                      {/* <Button
+                                      <Button
                                         variant="outlined"
-                                        onClick={() => handleEdit(entry)}
+                                        key={entry.id}
+                                        onClick={() =>
+                                          handleOpenEditModal(entry)
+                                        }
                                       >
                                         Edit
-                                      </Button> */}
+                                      </Button>
                                     </TableCell>
                                   </TableRow>
                                 );
                               })}
                             </TableBody>
                           </Table>
+                          {/* {successMessage && (
+    <div className="alert alert-success">
+      {successMessage}
+    </div>
+  )} */}
+  <div>
+                {successMessage && (
+                  <div className="success-message">
+                    <p>{successMessage}</p>
+                  </div>
+                )}
+              </div>
                         </Box>
                       </Scrollbar>
                     </Card>
@@ -518,21 +665,20 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                   <DialogContent>
                     <TextField
                       label="Expense Name"
-                      name="item_name"
-                      value={editData.item_name || ''}
+                      name="expense_name"
+                      value={editData.expense_name || ''}
                       onChange={handleEditChange}
                       fullWidth
                       margin="normal"
                     />
                     <TextField
                       label="Expense Price"
-                      name="quantity"
-                      value={editData.quantity || ''}
+                      name="expenses"
+                      value={editData.expenses || ''}
                       onChange={handleEditChange}
                       fullWidth
                       margin="normal"
                     />
-                    
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={() => setOpenEditModal(false)}>

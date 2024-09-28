@@ -2,7 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/userentry": "pages/userentry.js",
   "/auth/login": "pages/auth/login.js",
-  "/user": "pages/user.js"
+  "/user": "pages/user.js",
+  "/userentry": "pages/userentry.js"
 }

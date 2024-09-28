@@ -121,7 +121,6 @@ const Page = () => {
           const response = await axios.get(`${BASE_URL}/api/dataexpense/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          console.log(response.data);
           setEntriesss(response.data);
         } catch (error) {
           console.error(
@@ -145,7 +144,7 @@ const Page = () => {
             headers: { Authorization: `Bearer ${token}` },
           });
           // const setStockItems = response.data.filter(item => item.remaining_stock > 0);
-          console.log(response.data);
+          
           // setStockItems(availableStockItems);
 
           setStockItems(response.data);
@@ -377,6 +376,8 @@ const Page = () => {
         ...formData,
         [name]: numericValue, // Store raw numeric value without commas
       });
+
+      
       
     } else {
     setFormData({
@@ -400,12 +401,21 @@ const Page = () => {
         ...formData2,
         [name]: numericValue, // Store raw numeric value without commas
       });
+
+    e.target.value = formatWithCommas(numericValue);
+
+  } else if (name === 'area_in_square_meters') {
+    // Handle area_in_square_meters as a string to allow leading zeros
+    setFormData2({
+      ...formData2,
+      [name]: value, // Keep the value as a string to preserve leading zero
+    });
       
     } else {
     setFormData2({
       ...formData2,
       [name]:
-        name === 'area_in_square_meters' ||
+        // name === 'area_in_square_meters' ||
         name === 'total_price'
           ? parseFloat(value) || ''
           : value,
