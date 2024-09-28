@@ -57,7 +57,10 @@ export const CustomersTable = (props) => {
   const [loading, setLoading] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editData, setEditData] = useState({});
+  const [openEditModalNon, setOpenEditModalNon] = useState(false);
+  const [editDataNon, setEditDataNon] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
+  const [successMessageNon, setSuccessMessageNon]= useState('');
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -226,7 +229,13 @@ export const CustomersTable = (props) => {
       [name]: value,
     }));
   };
-
+  const handleEditChangeNon = (e) => {
+    const { name, value } = e.target;
+    setEditDataNon((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
   // Save the updated data
   // const handleSave = async () => {
   //   const token = localStorage.getItem('access_token');
@@ -257,77 +266,164 @@ export const CustomersTable = (props) => {
       return () => clearTimeout(timer); // Clear timeout if the component unmounts
     }
   }, [successMessage]);
-  
-const handleSave = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setSuccessMessage(''); // Clear any previous messages
 
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    try {
-      console.log(editData.id);
-      const response = await axios.put(
-        `${BASE_URL}/api/dataexpense/${editData.id}/`,
-        editData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  useEffect(() => {
+    if (successMessageNon) {
+      const timer = setTimeout(() => {
+        setSuccessMessageNon('');
+      }, 5000); // Clear message after 5 seconds
 
-      // Fetch the updated data after saving
-      const fetchEntriesss = async () => {
-        const token = localStorage.getItem('access_token');
-        if (token) {
-          try {
-            setLoading(true);
-            const response = await axios.get(`${BASE_URL}/api/dataexpense/`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            setEntriesss(response.data);
-            setLoading(false);
-
-            // Show success message after fetching data
-            setSuccessMessage('Expense was updated successfully!');
-          } catch (error) {
-            console.error(
-              'Error fetching data:',
-              error.response ? error.response.data : error.message
-            );
-            setLoading(false);
-          }
-        } else {
-          console.error('No token found');
-        }
-      };
-      fetchEntriesss();
-
-      // Close the edit modal
-      setOpenEditModal(false);
-
-      // Update local state if needed
-      setEntries((prevEntries) =>
-        prevEntries.map((entry) =>
-          entry.id === editData.id ? response.data : entry
-        )
-      );
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.error) {
-        alert(error.response.data.error);
-      } else {
-        console.error(
-          'Data submission failed:',
-          error.response ? error.response.data : error.message
-        );
-      }
-    } finally {
-      setLoading(false);
+      return () => clearTimeout(timer); // Clear timeout if the component unmounts
     }
-  } else {
-    console.error('No token found');
-  }
-};
+  }, [successMessageNon]);
 
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMessage(''); // Clear any previous messages
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        console.log(editData.id);
+        const response = await axios.put(
+          `${BASE_URL}/api/dataexpense/${editData.id}/`,
+          editData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        // Fetch the updated data after saving
+        const fetchEntriesss = async () => {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            try {
+              setLoading(true);
+              const response = await axios.get(`${BASE_URL}/api/dataexpense/`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              setEntriesss(response.data);
+              setLoading(false);
+
+              // Show success message after fetching data
+              setSuccessMessage('Expense was updated successfully!');
+            } catch (error) {
+              console.error(
+                'Error fetching data:',
+                error.response ? error.response.data : error.message,
+              );
+              setLoading(false);
+            }
+          } else {
+            console.error('No token found');
+          }
+        };
+        fetchEntriesss();
+
+        // Close the edit modal
+        setOpenEditModal(false);
+
+        // Update local state if needed
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.id === editData.id ? response.data : entry,
+          ),
+        );
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          alert(error.response.data.error);
+        } else {
+          console.error(
+            'Data submission failed:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      console.error('No token found');
+    }
+  };
+
+  const handleSaveNon = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMessageNon(''); // Clear any previous messages
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        console.log(editDataNon.id);
+        const response = await axios.put(
+          `${BASE_URL}/api/dataoutofstock/${editDataNon.id}/`,
+          editDataNon,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        // Fetch the updated data after saving
+        const fetchOutofstock = async () => {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            try {
+              setLoading(true);
+              const response = await axios.get(`${BASE_URL}/api/dataoutofstock/`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              setOutofstock(response.data);
+              setLoading(false);
+
+              // Show success message after fetching data
+              setSuccessMessageNon('Non-Stock was updated successfully!');
+            } catch (error) {
+              console.error(
+                'Error fetching data:',
+                error.response ? error.response.data : error.message,
+              );
+              setLoading(false);
+            }
+          } else {
+            console.error('No token found');
+          }
+        };
+        fetchOutofstock();
+
+        // Close the edit modal
+        setOpenEditModalNon(false);
+
+        // Update local state if needed
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.id === editDataNon.id ? response.data : entry,
+          ),
+        );
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          alert(error.response.data.error);
+        } else {
+          console.error(
+            'Data submission failed:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      console.error('No token found');
+    }
+  };
 
   // const handleSave = async (e) => {
   //   e.preventDefault();
@@ -365,11 +461,9 @@ const handleSave = async (e) => {
   //         }
   //       };
   //       fetchEntriesss();
-        
-        
+
   //       setOpenEditModal(false);
-        
-        
+
   //       if (editData.type === 'entries') {
   //         setEntries((prevEntries) =>
   //           prevEntries.map((entry) =>
@@ -389,9 +483,7 @@ const handleSave = async (e) => {
   //           )
   //         );
   //       }
-  
-        
-  
+
   //     } catch (error) {
   //       if (
   //         error.response &&
@@ -412,8 +504,6 @@ const handleSave = async (e) => {
   //     console.error('No token found');
   //   }
   // };
-  
-  
 
   const handleOpenEditModal = (entry) => {
     setEditData({
@@ -423,6 +513,16 @@ const handleSave = async (e) => {
       expenses: entry.expenses,
     });
     setOpenEditModal(true); // Open the modal
+  };
+
+  const handleOpenEditModalNon = (entry) => {
+    setEditDataNon({
+      id: entry.id,
+      date: entry.date,
+      name: entry.name,
+      price: entry.price,
+    });
+    setOpenEditModalNon(true); // Open the modal
   };
 
   return (
@@ -572,11 +672,30 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                                     <TableCell>
                                       {formatCurrency(entry.price) || 0}
                                     </TableCell>
+                                    <TableCell>
+
+                                      <Button
+                                        variant="outlined"
+                                        key={entry.id}
+                                        onClick={() =>
+                                          handleOpenEditModalNon(entry)
+                                        }
+                                      >
+                                        Edit
+                                      </Button>
+                                    </TableCell>
                                   </TableRow>
                                 );
                               })}
                             </TableBody>
                           </Table>
+                          <div>
+                            {successMessageNon && (
+                              <div className="success-message">
+                                <p>{successMessageNon}</p>
+                              </div>
+                            )}
+                          </div>
                         </Box>
                       </Scrollbar>
                     </Card>
@@ -618,12 +737,6 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                                       {formatCurrency(entry.expenses) || 0}
                                     </TableCell>
                                     <TableCell>
-                                      {/* Add Edit Button */}
-                                      {/* {filteredEntriesss.map((entry) => (
-  <Button key={entry.id} onClick={() => handleOpenEditModal(entry)}>
-    Edit
-  </Button>
-))} */}
 
                                       <Button
                                         variant="outlined"
@@ -640,18 +753,13 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                               })}
                             </TableBody>
                           </Table>
-                          {/* {successMessage && (
-    <div className="alert alert-success">
-      {successMessage}
-    </div>
-  )} */}
-  <div>
-                {successMessage && (
-                  <div className="success-message">
-                    <p>{successMessage}</p>
-                  </div>
-                )}
-              </div>
+                          <div>
+                            {successMessage && (
+                              <div className="success-message">
+                                <p>{successMessage}</p>
+                              </div>
+                            )}
+                          </div>
                         </Box>
                       </Scrollbar>
                     </Card>
@@ -689,7 +797,41 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     </Button>
                   </DialogActions>
                 </Dialog>
+                <Dialog
+                  open={openEditModalNon}
+                  onClose={() => setOpenEditModalNon(false)}
+                >
+                  <DialogTitle>Edit Non Stock Sales</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      label="Name"
+                      name="name"
+                      value={editDataNon.name || ''}
+                      onChange={handleEditChangeNon}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Price"
+                      name="price"
+                      value={editDataNon.price || ''}
+                      onChange={handleEditChangeNon}
+                      fullWidth
+                      margin="normal"
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setOpenEditModalNon(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSaveNon} variant="contained">
+                      Save
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </>
+
+              
             ) : (
               <p>No data available for the selected date .</p>
             )
