@@ -41,14 +41,13 @@ const Page = () => {
           const response = await axios.get(`${BASE_URL}/debts/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          // Ensure the data is an array
           const data = Array.isArray(response.data) ? response.data : [];
           setDebts(data);
           setFilteredDebts(data);
         } catch (error) {
           console.error(
             'Error fetching data:',
-            error.response ? error.response.data : error.message,
+            error.response ? error.response.data : error.message
           );
         } finally {
           setLoading(false);
@@ -65,9 +64,7 @@ const Page = () => {
       if (startDate && endDate) {
         return entries.filter((entry) => {
           const entryDate = new Date(entry.date);
-          return (
-            entryDate >= new Date(startDate) && entryDate <= new Date(endDate)
-          );
+          return entryDate >= new Date(startDate) && entryDate <= new Date(endDate);
         });
       }
       return entries;
@@ -82,6 +79,24 @@ const Page = () => {
 
   const handleEndDateChange = (e) => {
     setEndDate(e.target.value);
+  };
+
+  const handleDeleteDebt = async (id) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      if (window.confirm('Are you sure you want to delete this debt?')) {
+        try {
+          await axios.delete(`${BASE_URL}/debts/${id}/`,{
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setFilteredDebts(filteredDebts.filter((debt) => debt.id !== id));
+        } catch (error) {
+          console.error('Error deleting debt:', error.response ? error.response.data : error.message);
+        }
+      }
+    } else {
+      console.error('No token found');
+    }
   };
 
   return (
@@ -144,14 +159,12 @@ const Page = () => {
                               <TableCell>Amount</TableCell>
                               <TableCell>Date</TableCell>
                               <TableCell>Status</TableCell>
+                              <TableCell>Action</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
                             {filteredDebts.map((debt) => {
-                              const createdAt = format(
-                                new Date(debt.date),
-                                'dd/MM/yyyy',
-                              );
+                              const createdAt = format(new Date(debt.date), 'dd/MM/yyyy');
                               return (
                                 <TableRow hover key={debt.id}>
                                   <TableCell>{debt.stock_name}</TableCell>
@@ -159,11 +172,18 @@ const Page = () => {
                                   <TableCell>{debt.amount}</TableCell>
                                   <TableCell>{createdAt}</TableCell>
                                   <TableCell>
-                                    <SeverityPill
-                                      color={statusMap[debt.status]}
-                                    >
+                                    <SeverityPill color={statusMap[debt.status]}>
                                       {debt.status}
                                     </SeverityPill>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Button
+                                      variant="contained"
+                                      color="error"
+                                      onClick={() => handleDeleteDebt(debt.id)}
+                                    >
+                                      Delete
+                                    </Button>
                                   </TableCell>
                                 </TableRow>
                               );

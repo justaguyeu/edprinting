@@ -23,10 +23,16 @@ import {
   DialogContent,
   DialogTitle,
   TableRow,
+  MenuItem,
   Typography,
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
+import { SeverityPill } from 'src/components/severity-pill';
 import { getInitials } from 'src/utils/get-initials';
+const statusMap = {
+  pending: 'warning',
+  paid: 'success',
+};
 
 export const CustomersTable = (props) => {
   const {
@@ -48,19 +54,24 @@ export const CustomersTable = (props) => {
   const [entries, setEntries] = useState([]);
   const [entriess, setEntriess] = useState([]);
   const [entriesss, setEntriesss] = useState([]);
+  const [entriessss, setEntriessss] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [filteredEntriess, setFilteredEntriess] = useState([]);
   const [filteredEntriesss, setFilteredEntriesss] = useState([]);
+  const [filteredEntriessss, setFilteredEntriessss] = useState([]);
   const [filteredOutofstock, setFilteredOutofstock] = useState([]);
   const [outofstock, setOutofstock] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [openEditModalDebt, setOpenEditModalDebt] = useState(false);
   const [editData, setEditData] = useState({});
   const [openEditModalNon, setOpenEditModalNon] = useState(false);
   const [editDataNon, setEditDataNon] = useState({});
+  const [editDataDebt, setEditDataDebt] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   const [successMessageNon, setSuccessMessageNon]= useState('');
+  const [successMessageDebt, setSuccessMessageDebt]= useState('');
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -135,6 +146,32 @@ export const CustomersTable = (props) => {
     };
     fetchEntriesss();
   }, []);
+  useEffect(() => {
+    const fetchEntriessss = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          setLoading(true);
+          const response = await axios.get(`${BASE_URL}/debts/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }); 
+          console.log(response.data)
+          setEntriessss(response.data);
+          setLoading(false);
+        } catch (error) {
+          console.error(
+            'Error fetching data:',
+            error.response ? error.response.data : error.message,
+          );
+          setLoading(false);
+        }
+      } else {
+        console.error('No token found');
+      }
+    };
+    fetchEntriessss();
+  }, []);
+
 
   useEffect(() => {
     const fetchOutofstock = async () => {
@@ -178,6 +215,15 @@ export const CustomersTable = (props) => {
       setFilteredEntriesss([]);
     }
   }, [selectedDate, entriesss]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      const filtered = entriessss.filter((entry) => entry.date === selectedDate);
+      setFilteredEntriessss(filtered);
+    } else {
+      setFilteredEntriessss([]);
+    }
+  }, [selectedDate, entriessss]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -236,6 +282,13 @@ export const CustomersTable = (props) => {
       [name]: value,
     }));
   };
+  const handleEditChangeDebt = (e) => {
+    const { name, value } = e.target;
+    setEditDataDebt((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
   // Save the updated data
   // const handleSave = async () => {
   //   const token = localStorage.getItem('access_token');
@@ -276,6 +329,16 @@ export const CustomersTable = (props) => {
       return () => clearTimeout(timer); // Clear timeout if the component unmounts
     }
   }, [successMessageNon]);
+
+  useEffect(() => {
+    if (successMessageDebt){
+      const timer = setTimeout(() => {
+        setSuccessMessageDebt('');
+      }, 5000); // Clear message after 5 seconds
+
+      return () => clearTimeout(timer); // Clear timeout if the component unmounts
+    }
+  }, [successMessageDebt]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -417,6 +480,82 @@ export const CustomersTable = (props) => {
             error.response ? error.response.data : error.message,
           );
         }
+
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      console.error('No token found');
+    }
+  };
+
+  const handleSaveDebt = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMessageDebt(''); // Clear any previous messages
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        const response = await axios.put(
+          `${BASE_URL}/debts/${editDataDebt.id}/`,
+          editDataDebt,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        console.log(response.data);
+
+        // Fetch the updated data after saving
+        const fetchEntriessss = async () => {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            try {
+              setLoading(true);
+              const response = await axios.get(`${BASE_URL}/debts/`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              setEntriessss(response.data);
+              setLoading(false);
+
+              // Show success message after fetching data
+              setSuccessMessageDebt('Status was updated successfully!');
+            } catch (error) {
+              console.error(
+                'Error fetching data:',
+                error.response ? error.response.data : error.message,
+              );
+              setLoading(false);
+            }
+          } else {
+            console.error('No token found');
+          }
+        };
+        fetchEntriessss();
+
+        // Close the edit modal
+        setOpenEditModalDebt(false);
+
+        // Update local state if needed
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.id === editDataDebt.id ? response.data : entry,
+          ),
+        );
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          alert(error.response.data.error);
+        } else {
+          console.error(
+            'Data submission failed:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+
       } finally {
         setLoading(false);
       }
@@ -514,6 +653,14 @@ export const CustomersTable = (props) => {
     });
     setOpenEditModal(true); // Open the modal
   };
+  const handleOpenEditModalDebt = (entry) => {
+    setEditDataDebt({
+      id: entry.id,
+      date: entry.date,
+      status: entry.status,
+    });
+    setOpenEditModalDebt(true); // Open the modal
+  };
 
   const handleOpenEditModalNon = (entry) => {
     setEditDataNon({
@@ -545,6 +692,7 @@ export const CustomersTable = (props) => {
           {selectedDate ? (
             filteredEntries.length > 0 ||
             filteredEntriess.length > 0 ||
+            filteredEntriessss.length > 0 ||
             filteredOutofstock.length > 0 ||
             filteredEntriesss.length > 0 ? (
               <>
@@ -764,6 +912,75 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                       </Scrollbar>
                     </Card>
                   </CardContent>
+                  <CardContent>
+                    <Card>
+                      <Scrollbar>
+                        <Box sx={{ minWidth: 800 }}>
+                          <Table>
+                            <TableHead>
+                              <Typography
+                                variant="h6"
+                                sx={{
+                                  p: 2,
+                                  alignItems: 'center',
+                                  display: 'flex',
+                                  flexDirection: 'row',
+                                }}
+                              >
+                                Debts
+                              </Typography>
+                              <TableRow>
+                              <TableCell>Stock Name</TableCell>
+                <TableCell>Customer Name</TableCell>
+                <TableCell>Stock Amount/Dimensions</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Status</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {filteredEntriessss.map((entry) => {
+                                const createdAt = format(new Date(entry.date), 'dd/MM/yyyy');
+                                return (
+                                  <TableRow>
+                                    <TableCell>{entry.stock_name}</TableCell>
+                    <TableCell>{entry.debtor_name}</TableCell>
+                    <TableCell>{entry.stock_dimensions}</TableCell>
+                    <TableCell>{formatCurrency(entry.amount)}</TableCell>
+                    <TableCell>{createdAt}</TableCell>
+                    <TableCell>
+                      <SeverityPill color={statusMap[entry.status]}>
+                        {entry.status}
+                      </SeverityPill>
+                    </TableCell>
+                                    <TableCell>
+
+                                      <Button
+                                        variant="outlined"
+                                        key={entry.id}
+                                        onClick={() =>
+                                          handleOpenEditModalDebt(entry)
+                                        }
+                                      >
+                                        Update
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                          <div>
+                            {successMessageDebt && (
+                              <div className="success-message">
+                                <p>{successMessageDebt}</p>
+                              </div>
+                            )}
+                          </div>
+                        </Box>
+                      </Scrollbar>
+                    </Card>
+                  </CardContent>
                 </>
                 <Dialog
                   open={openEditModal}
@@ -825,6 +1042,33 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                       Cancel
                     </Button>
                     <Button onClick={handleSaveNon} variant="contained">
+                      Save
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                <Dialog
+                  open={openEditModalDebt}
+                  onClose={() => setOpenEditModalDebt(false)}
+                >
+                  <DialogTitle>Edit Debt Status</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      label="Status"
+                      name="status"
+                      select
+                      value={editDataDebt.status || ''}
+                      onChange={handleEditChangeDebt}
+                      required
+                    >
+                      <MenuItem value="pending">Pending</MenuItem>
+                      <MenuItem value="paid">Paid</MenuItem>
+                    </TextField>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setOpenEditModalDebt(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSaveDebt} variant="contained">
                       Save
                     </Button>
                   </DialogActions>

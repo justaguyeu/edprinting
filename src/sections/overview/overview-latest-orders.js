@@ -80,7 +80,8 @@ const handleClick = () => {
               <TableRow>
                 <TableCell>Stock Name</TableCell>
                 <TableCell>Customer Name</TableCell>
-                <TableCell>Amount</TableCell>
+                <TableCell>Stock Amount/Dimensions</TableCell>
+                <TableCell>Price</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
@@ -92,6 +93,7 @@ const handleClick = () => {
                   <TableRow hover key={debt.id}>
                     <TableCell>{debt.stock_name}</TableCell>
                     <TableCell>{debt.debtor_name}</TableCell>
+                    <TableCell>{debt.stock_dimensions}</TableCell>
                     <TableCell>{formatCurrency(debt.amount)}</TableCell>
                     <TableCell>{createdAt}</TableCell>
                     <TableCell>

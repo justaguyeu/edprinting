@@ -35,6 +35,7 @@ const Page = () => {
   const [formData, setFormData] = useState({
     stock_name: '',
     debtor_name: '',
+    stock_dimensions: '',
     amount: '',
     date: '',
     status: 'pending',
@@ -75,7 +76,7 @@ const Page = () => {
             })),
           ];
 
-          console.log('Standardized stock items:', standardizedStockItems);
+          // console.log('Standardized stock items:', standardizedStockItems);
 
           // Update the state with standardized stock items
           setStockItems(standardizedStockItems);
@@ -132,7 +133,7 @@ const Page = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
     if (name === 'amount') {
       // Handle amount formatting with commas
       const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
@@ -154,12 +155,12 @@ const Page = () => {
       });
     }
   };
-  
+
   // Helper function to format numbers with commas
   const formatWithCommas = (value) => {
     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas every three digits
   };
-  
+
 
   const formatCurrency = (value) => {
     const numericValue = Number(value) || 0;
@@ -225,22 +226,29 @@ const Page = () => {
                     </select>
 
                     <TextField
-  label="Debtor Name"
-  name="debtor_name"
-  value={formData.debtor_name} // Value will be in uppercase
-  onChange={handleChange} // Automatically converts to uppercase
-  required
-/>
+                      label="Debtor Name"
+                      name="debtor_name"
+                      value={formData.debtor_name} // Value will be in uppercase
+                      onChange={handleChange} // Automatically converts to uppercase
+                      required
+                    />
+                    <TextField
+                      label="Stock Amount/Dimensions"
+                      name="stock_dimensions"
+                      value={formData.stock_dimensions} // Value will be in uppercase
+                      onChange={handleChange} // Automatically converts to uppercase
+                      required
+                    />
 
 
-<TextField
-  label="Amount"
-  name="amount"
-  type="text" // Change type to text to allow formatting with commas
-  value={formatWithCommas(formData.amount)} // Display formatted amount with commas
-  onChange={handleChange}
-  required
-/>
+                    <TextField
+                      label="Amount"
+                      name="amount"
+                      type="text" // Change type to text to allow formatting with commas
+                      value={formatWithCommas(formData.amount)} // Display formatted amount with commas
+                      onChange={handleChange}
+                      required
+                    />
 
                     <TextField
                       label="Status"
