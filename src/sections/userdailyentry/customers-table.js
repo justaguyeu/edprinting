@@ -155,6 +155,7 @@ export const CustomersTable = (props) => {
           const response = await axios.get(`${BASE_URL}/debts/`, {
             headers: { Authorization: `Bearer ${token}` },
           }); 
+          
           console.log(response.data)
           setEntriessss(response.data);
           setLoading(false);
@@ -497,8 +498,14 @@ export const CustomersTable = (props) => {
     const token = localStorage.getItem('access_token');
     if (token) {
       try {
+
+        const debtToUpdate = {
+          ...editDataDebt,// Copy the current debt data
+          id: editDataDebt.id // Ensure the id is the correct one from the selected debt
+        };
+
         const response = await axios.put(
-          `${BASE_URL}/debts/${editDataDebt.id}/`,
+          `${BASE_URL}/debts/${debtToUpdate.id}/`,
           editDataDebt,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -658,6 +665,10 @@ export const CustomersTable = (props) => {
       id: entry.id,
       date: entry.date,
       status: entry.status,
+      stock_name: entry.stock_name,
+      debtor_name: entry.debtor_name,
+      amount: entry.amount,
+      stock_dimensions: entry.stock_dimensions,
     });
     setOpenEditModalDebt(true); // Open the modal
   };
@@ -1052,7 +1063,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                 >
                   <DialogTitle>Edit Debt Status</DialogTitle>
                   <DialogContent>
-                    <TextField
+                  <TextField
                       label="Status"
                       name="status"
                       select
@@ -1063,6 +1074,39 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                       <MenuItem value="pending">Pending</MenuItem>
                       <MenuItem value="paid">Paid</MenuItem>
                     </TextField>
+                  <TextField
+                      label="Stock"
+                      name="stock_name"
+                      value={editDataDebt.stock_name || ''}
+                      onChange={handleEditChangeDebt}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Debtor"
+                      name="debtor_name"
+                      value={editDataDebt.debtor_name || ''}
+                      onChange={handleEditChangeDebt}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Dimensions"
+                      name="stock_dimensions "
+                      value={editDataDebt.stock_dimensions || ''}
+                      onChange={handleEditChangeDebt}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Amount"
+                      name="amount"
+                      value={editDataDebt.amount || ''}
+                      onChange={handleEditChangeDebt}
+                      fullWidth
+                      margin="normal"
+                    />
+                    
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={() => setOpenEditModalDebt(false)}>
