@@ -570,7 +570,7 @@ const Page = () => {
                           type="text"
                           name="discount_price"
                           value={formatWithCommas(formData.discount_price)}
-                          // value={formData.discount_price}
+                          
                           onChange={handleChange}
                         />
                         <TextField

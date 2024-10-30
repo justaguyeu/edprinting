@@ -67,11 +67,68 @@ export const CustomersTable = (props) => {
   const [openEditModalDebt, setOpenEditModalDebt] = useState(false);
   const [editData, setEditData] = useState({});
   const [openEditModalNon, setOpenEditModalNon] = useState(false);
+  const [openEditModalSales, setOpenEditModalSales] = useState(false);
+  const [openEditModalNonSales, setOpenEditModalNonSales] = useState(false);
   const [editDataNon, setEditDataNon] = useState({});
   const [editDataDebt, setEditDataDebt] = useState({});
+  const [editDataSales, setEditDataSales] = useState({});
+  const [editDataNonSales, setEditDataNonSales] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   const [successMessageNon, setSuccessMessageNon]= useState('');
   const [successMessageDebt, setSuccessMessageDebt]= useState('');
+  const [successMessageSales, setSuccessMessageSales]= useState('');
+  const [successMessageNonSales, setSuccessMessageNonSales]= useState('');
+  const [stockItems, setStockItems] = useState([]);
+  const [stockItemss, setStockItemss] = useState([]);
+
+
+  useEffect(() => {
+    const fetchStockItems = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const response = await axios.get(`${BASE_URL}/available-stock/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          // const setStockItems = response.data.filter(item => item.remaining_stock > 0);
+          
+          // setStockItems(availableStockItems);
+
+          setStockItems(response.data);
+        } catch (error) {
+          console.error(
+            'Error fetching stock data:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      }
+    };
+    fetchStockItems();
+  }, []);
+
+  useEffect(() => {
+    const fetchStockItemss = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const response = await axios.get(`${BASE_URL}/available-stock2/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          // const setStockItemss = response.data.filter(item => item.remaining_stock > 0);
+
+          // setStockItemss(availableStockItems);
+          // console.log('Fetched stockItemss:', stockItemss);
+          setStockItemss(response.data);
+        } catch (error) {
+          console.error(
+            'Error fetching stock data:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+      }
+    };
+    fetchStockItemss();
+  }, []);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -82,6 +139,7 @@ export const CustomersTable = (props) => {
           const response = await axios.get(`${BASE_URL}/api/data/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          
           setEntries(response.data);
           setLoading(false);
         } catch (error) {
@@ -106,7 +164,7 @@ export const CustomersTable = (props) => {
           const response = await axios.get(`${BASE_URL}/api/data2/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-
+          
           setEntriess(response.data);
           setLoading(false);
         } catch (error) {
@@ -290,6 +348,20 @@ export const CustomersTable = (props) => {
       [name]: value,
     }));
   };
+  const handleEditChangeSales = (e) => {
+    const { name, value } = e.target;
+    setEditDataSales((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+  const handleEditChangeNonSales = (e) => {
+    const { name, value } = e.target;
+    setEditDataNonSales((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
   // Save the updated data
   // const handleSave = async () => {
   //   const token = localStorage.getItem('access_token');
@@ -340,6 +412,26 @@ export const CustomersTable = (props) => {
       return () => clearTimeout(timer); // Clear timeout if the component unmounts
     }
   }, [successMessageDebt]);
+
+  useEffect(() => {
+    if (successMessageSales) {
+      const timer = setTimeout(() => {
+        setSuccessMessageSales('');
+      }, 5000); // Clear message after 5 seconds
+
+      return () => clearTimeout(timer); // Clear timeout if the component unmounts
+    }
+  }, [successMessageSales]);
+
+  useEffect(() => {
+    if (successMessageNonSales) {
+      const timer = setTimeout(() => {
+        setSuccessMessageNonSales('');
+      }, 5000); // Clear message after 5 seconds
+
+      return () => clearTimeout(timer); // Clear timeout if the component unmounts
+    }
+  }, [successMessageNonSales]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -571,6 +663,168 @@ export const CustomersTable = (props) => {
     }
   };
 
+  const handleSaveSales= async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMessageSales(''); // Clear any previous messages
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+
+        const salesToUpdate = {
+          ...editDataSales,// Copy the current debt data
+          id: editDataSales.id // Ensure the id is the correct one from the selected debt
+        };
+
+        console.log(editDataSales.id);
+        const response = await axios.put(
+          `${BASE_URL}/api/data/${salesToUpdate.id}/`,
+          editDataSales,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        // Fetch the updated data after saving
+        const fetchEntries = async () => {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            try {
+              setLoading(true);
+              const response = await axios.get(`${BASE_URL}/api/data/`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              setEntries(response.data);
+              setLoading(false);
+
+              // Show success message after fetching data
+              setSuccessMessageSales('Sales was updated successfully!');
+            } catch (error) {
+              console.error(
+                'Error fetching data:',
+                error.response ? error.response.data : error.message,
+              );
+              setLoading(false);
+            }
+          } else {
+            console.error('No token found');
+          }
+        };
+        fetchEntries();
+
+        // Close the edit modal
+        setOpenEditModalSales(false);
+
+        // Update local state if needed
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.id === editDataSales.id ? response.data : entry,
+          ),
+        );
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          alert(error.response.data.error);
+        } else {
+          console.error(
+            'Data submission failed:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      console.error('No token found');
+    }
+  };
+
+  const handleSaveNonSales = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMessageNonSales(''); // Clear any previous messages
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+
+        const nonsalesToUpdate = {
+          ...editDataNonSales,// Copy the current debt data
+          id: editDataNonSales.id // Ensure the id is the correct one from the selected debt
+        };
+
+        console.log(editDataNonSales.id);
+        const response = await axios.put(
+          `${BASE_URL}/api/data2/${nonsalesToUpdate.id}/`,
+          editDataNonSales,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        // Fetch the updated data after saving
+        const fetchEntriess = async () => {
+          const token = localStorage.getItem('access_token');
+          if (token) {
+            try {
+              setLoading(true);
+              const response = await axios.get(`${BASE_URL}/api/data2/`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              setEntriess(response.data);
+              setLoading(false);
+
+              // Show success message after fetching data
+              setSuccessMessageNonSales('Sales was updated successfully!');
+            } catch (error) {
+              console.error(
+                'Error fetching data:',
+                error.response ? error.response.data : error.message,
+              );
+              setLoading(false);
+            }
+          } else {
+            console.error('No token found');
+          }
+        };
+        fetchEntriess();
+
+        // Close the edit modal
+        setOpenEditModalNonSales(false);
+
+        // Update local state if needed
+        setEntries((prevEntries) =>
+          prevEntries.map((entry) =>
+            entry.id === editDataNonSales.id ? response.data : entry,
+          ),
+        );
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          alert(error.response.data.error);
+        } else {
+          console.error(
+            'Data submission failed:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      console.error('No token found');
+    }
+  };
+
   // const handleSave = async (e) => {
   //   e.preventDefault();
   //   setLoading(true);
@@ -683,6 +937,29 @@ export const CustomersTable = (props) => {
     setOpenEditModalNon(true); // Open the modal
   };
 
+  const handleOpenEditModalSales= (entry) => {
+    setEditDataSales({
+      id: entry.id,
+      date: entry.date,
+      item_name: entry.item_name,
+      quantity: entry.quantity,
+      total_price: entry.total_price,
+      discount_price: entry.discount_price,
+    });
+    setOpenEditModalSales(true); // Open the modal
+  };
+  const handleOpenEditModalNonSales = (entry) => {
+    setEditDataNonSales({
+      id: entry.id,
+      date: entry.date,
+      item_name: entry.item_name,
+      total_price: entry.total_price,
+      area_in_square_meters: entry.area_in_square_meters,
+      discount_price: entry.discount_price,
+    });
+    setOpenEditModalNonSales(true); // Open the modal
+  };
+
   return (
     <>
       <Card sx={{ p: 2 }}>
@@ -750,7 +1027,17 @@ export const CustomersTable = (props) => {
                                     <TableCell>
                                       {formatCurrency(entry.discount_price)}
                                     </TableCell>
+                                    <Button
+                                        variant="outlined"
+                                        key={entry.id}
+                                        onClick={() =>
+                                          handleOpenEditModalSales(entry)
+                                        }
+                                      >
+                                        Edit
+                                      </Button>
                                   </TableRow>
+                                  
                                 );
                               })}
                             </TableBody>
@@ -772,20 +1059,34 @@ export const CustomersTable = (props) => {
                                     <TableCell>
                                       {formatCurrency(entry.discount_price)}
                                     </TableCell>
-                                    {/* <TableCell>
-                                      
-                                      <Button
+                                    <Button
                                         variant="outlined"
-                                        onClick={() => handleEdit(entry)}
+                                        key={entry.id}
+                                        onClick={() =>
+                                          handleOpenEditModalNonSales(entry)
+                                        }
                                       >
                                         Edit
                                       </Button>
-                                    </TableCell> */}
                                   </TableRow>
                                 );
                               })}
                             </TableBody>
                           </Table>
+                          <div>
+                            {successMessageNonSales && (
+                              <div className="success-message">
+                                <p>{successMessageNonSales}</p>
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                                  {successMessageSales&& (
+                                    <div className="success-message">
+                                      <p>{successMessageSales}</p>
+                                    </div>
+                                  )}
+                                </div>
                         </Box>
                       </Scrollbar>
 
@@ -1117,6 +1418,131 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     </Button>
                   </DialogActions>
                 </Dialog>
+                <Dialog
+                  open={openEditModalSales}
+                  onClose={() => setOpenEditModalSales(false)}
+                >
+                  <DialogTitle>Edit Sales</DialogTitle>
+                  <DialogContent>
+                  <select
+                          name="item_name"
+                          value={editDataSales.item_name}
+                          onChange={handleEditChangeSales}
+                          required
+                        >
+                          <option value="">Choose Stock</option>
+                          {stockItems.map((item, index) => (
+                            <option key={index} value={item.name}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                    <TextField
+                      label="Name"
+                      name="item_name"
+                      value={editDataSales.item_name || ''}
+                      onChange={handleEditChangeSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                    
+                    <TextField
+                      label="Quantity"
+                      name="quantity"
+                      value={editDataSales.quantity || ''}
+                      onChange={handleEditChangeSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Discount Price"
+                      name="discount_price"
+                      value={editDataSales.discount_price || ''}
+                      onChange={handleEditChangeSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Total Price"
+                      name="total_price"
+                      value={editDataSales.total_price || ''}
+                      onChange={handleEditChangeSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setOpenEditModalSales(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSaveSales} variant="contained">
+                      Save
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                <Dialog
+                  open={openEditModalNonSales}
+                  onClose={() => setOpenEditModalNonSales(false)}
+                >
+                  <DialogTitle>Edit  Sales</DialogTitle>
+                  <DialogContent>
+                  <select
+                          name="item_name"
+                          value={editDataNonSales.item_name}
+                          onChange={handleEditChangeNonSales}
+                          required
+                        >
+                          <option value="">Choose Stock</option>
+                          {stockItemss.map((item, index) => (
+                            <option key={index} value={item.stock_name}>
+                              {item.stock_name}
+                            </option>
+                          ))}
+                        </select>
+                    <TextField
+                      label="Name"
+                      name="item_name"
+                      value={editDataNonSales.item_name || ''}
+                      onChange={handleEditChangeNonSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                    
+                    <TextField
+                      label="Square Meters"
+                      name="area_in_square_meters"
+                      value={editDataNonSales.area_in_square_meters || ''}
+                      onChange={handleEditChangeNonSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Discount Price"
+                      name="discount_price"
+                      value={editDataNonSales.discount_price || ''}
+                      onChange={handleEditChangeNonSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Total Price"
+                      name="total_price"
+                      value={editDataNonSales.total_price || ''}
+                      onChange={handleEditChangeNonSales}
+                      fullWidth
+                      margin="normal"
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setOpenEditModalNonSales(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSaveNonSales} variant="contained">
+                      Save
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                
               </>
 
               
