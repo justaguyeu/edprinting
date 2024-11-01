@@ -257,6 +257,85 @@ export const CustomersTable = (props) => {
     fetchOutofstock();
   }, []);
 
+
+  useEffect(() => {
+    if (editDataNonSales.item_name) {
+      const selectedItem = stockItemss.find(
+        (item) => item.stock_name === editDataNonSales.item_name,
+      );
+      if (selectedItem) {
+        const pricePerSquareMeter = selectedItem.price_per_square_meter;
+        const area = editDataNonSales.area_in_square_meters || 0;
+
+        // Calculate the price based on area
+        const priceWithoutDiscount = pricePerSquareMeter * area ;
+
+        // Apply discount if provided
+        const discount = editDataNonSales.discount_price || 0;
+        const totalPrice = priceWithoutDiscount - discount;
+
+        setEditDataNonSales((prevData) => ({
+          ...prevData,
+         total_price: totalPrice > 0 ? totalPrice : 0, // Ensure the total price is not negative
+        }));
+      }
+    }
+  }, [
+    editDataNonSales.item_name,
+    editDataNonSales.area_in_square_meters,
+    editDataNonSales.discount_price,
+    stockItemss,
+  ]);
+
+  useEffect(() => {
+    if (editDataSales.item_name) {
+      const selectedItem = stockItems.find(
+        (item) => item.name === editDataSales.item_name,
+      );
+      if (selectedItem) {
+        const priceWithoutDiscount =
+          selectedItem.price_per_unit * editDataSales.quantity;
+        const discount = editDataSales.discount_price || 0; // Use discount if provided, otherwise default to 0
+        const totalPrice = priceWithoutDiscount - discount;
+
+        setEditDataSales((prevData) => ({
+          ...prevData,
+          total_price: totalPrice > 0 ? totalPrice : 0, // Ensure total price does not go negative
+        }));
+      }
+    }
+  }, [
+    editDataSales.item_name,
+    editDataSales.quantity,
+    editDataSales.discount_price,
+    stockItems,
+  ]);
+
+
+  const formatCurrency = (value) => {
+    const numericValue = Number(value) || 0;
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'TZS',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+      .format(numericValue)
+      .replace('TZS', 'Tsh');
+  };
+
+
+
+
+  
+  // Helper function to format numbers with commas
+  const formatWithCommas = (value) => {
+    if (typeof value === 'string') {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas every three digits
+    }
+    return value; // Return as-is if not a string
+};
+
   useEffect(() => {
     if (selectedDate) {
       const filtered = entries.filter((entry) => entry.date === selectedDate);
@@ -308,17 +387,7 @@ export const CustomersTable = (props) => {
     setSelectedDate(e.target.value);
   };
 
-  const formatCurrency = (value) => {
-    const numericValue = Number(value) || 0;
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'TZS',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
-      .format(numericValue)
-      .replace('TZS', 'Tsh');
-  };
+
 
   // Handle Edit button click
   const handleEdit = (entry) => {
@@ -348,19 +417,77 @@ export const CustomersTable = (props) => {
       [name]: value,
     }));
   };
+  // const handleEditChangeSales = (e) => {
+  //   const { name, value } = e.target;
+  //   setEditDataSales((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
+  // const handleEditChangeNonSales = (e) => {
+  //   const { name, value } = e.target;
+  //   setEditDataNonSales((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
+
+
   const handleEditChangeSales = (e) => {
     const { name, value } = e.target;
-    setEditDataSales((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === 'discount_price') {
+      // Handle amount formatting with commas
+      const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      setEditDataSales({
+        ...editDataSales,
+        [name]: numericValue, // Store raw numeric value without commas
+      });
+
+      
+      
+    } else {
+      setEditDataSales({
+      ...editDataSales,
+      [name]:
+        name === 'quantity' ||
+        name === 'total_price'
+          ? parseFloat(value) || ''
+          : value,
+    });}
+    
   };
+
   const handleEditChangeNonSales = (e) => {
     const { name, value } = e.target;
-    setEditDataNonSales((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === 'discount_price') {
+      // Handle amount formatting with commas
+      const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      setEditDataNonSales({
+        ...editDataNonSales,
+        [name]: numericValue, // Store raw numeric value without commas
+      });
+
+    e.target.value = formatWithCommas(numericValue);
+
+  } else if (name === 'area_in_square_meters') {
+    // Handle area_in_square_meters as a string to allow leading zeros
+    setEditDataNonSales({
+      ...editDataNonSales,
+      [name]: value, // Keep the value as a string to preserve leading zero
+    });
+      
+    } else {
+      setEditDataNonSales({
+      ...editDataNonSales,
+      [name]:
+        // name === 'area_in_square_meters' ||
+        name === 'total_price'
+          ? parseFloat(value) || ''
+          : value,
+    });}
+
+
   };
   // Save the updated data
   // const handleSave = async () => {
@@ -1424,7 +1551,25 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                 >
                   <DialogTitle>Edit Sales</DialogTitle>
                   <DialogContent>
-                  <select
+                    <Card 
+                    sx={{
+                      p: 2,
+                      gap: 3,
+                      alignItems: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                    >
+                  <input
+                          type="date"
+                          name="date"
+                          value={editDataSales.date}
+                          onChange={handleEditChangeSales}
+                          required
+                        />
+                        <label htmlFor="date-filter"> Selection Stock:</label>
+                        <select
+                        
                           name="item_name"
                           value={editDataSales.item_name}
                           onChange={handleEditChangeSales}
@@ -1437,6 +1582,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                             </option>
                           ))}
                         </select>
+                        </Card>
                     <TextField
                       label="Name"
                       name="item_name"
@@ -1457,7 +1603,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     <TextField
                       label="Discount Price"
                       name="discount_price"
-                      value={editDataSales.discount_price || ''}
+                      value={formatWithCommas(editDataSales.discount_price || '')}
                       onChange={handleEditChangeSales}
                       fullWidth
                       margin="normal"
@@ -1465,7 +1611,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     <TextField
                       label="Total Price"
                       name="total_price"
-                      value={editDataSales.total_price || ''}
+                      value={formatCurrency(editDataSales.total_price || '')}
                       onChange={handleEditChangeSales}
                       fullWidth
                       margin="normal"
@@ -1486,7 +1632,25 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                 >
                   <DialogTitle>Edit  Sales</DialogTitle>
                   <DialogContent>
-                  <select
+                  <Card 
+                    sx={{
+                      p: 2,
+                      gap: 3,
+                      alignItems: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                    >
+                  <input
+                          type="date"
+                          name="date"
+                          value={editDataNonSales.date}
+                          onChange={handleEditChangeNonSales}
+                          required
+                        />
+                        <label htmlFor="date-filter"> Selection Stock:</label>
+                        <select
+                        
                           name="item_name"
                           value={editDataNonSales.item_name}
                           onChange={handleEditChangeNonSales}
@@ -1499,6 +1663,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                             </option>
                           ))}
                         </select>
+                        </Card>
                     <TextField
                       label="Name"
                       name="item_name"
@@ -1519,7 +1684,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     <TextField
                       label="Discount Price"
                       name="discount_price"
-                      value={editDataNonSales.discount_price || ''}
+                      value={formatWithCommas(editDataNonSales.discount_price || '')}
                       onChange={handleEditChangeNonSales}
                       fullWidth
                       margin="normal"
@@ -1527,7 +1692,7 @@ rowsPerPageOptions={[5, 10, 25]} /> */}
                     <TextField
                       label="Total Price"
                       name="total_price"
-                      value={editDataNonSales.total_price || ''}
+                      value={formatCurrency(editDataNonSales.total_price || '')}
                       onChange={handleEditChangeNonSales}
                       fullWidth
                       margin="normal"
