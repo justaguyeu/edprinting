@@ -35,19 +35,19 @@ export const items = [
     path: '/userentry',
     icon: (
       <SvgIcon fontSize="small">
-        <CogIcon/>
+        <CurrencyDollarIcon />
       </SvgIcon>
     ),
   },
-  // {
-  //   title: 'Students',
-  //   path: '/students',
-  //   icon: (
-  //     <SvgIcon fontSize="small">
-  //       <UserIcon />
-  //     </SvgIcon>
-  //   )
-  // },
+  {
+    title: 'Settings',
+    path: '/user-settings',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UserIcon />
+      </SvgIcon>
+    )
+  },
   // {
   //   title: 'Exams',
   //   path: '/exams',

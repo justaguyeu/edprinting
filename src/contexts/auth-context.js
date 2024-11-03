@@ -68,7 +68,8 @@ export const AuthProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
   const router = useRouter();
-  const [successMessage, setSuccessMessage] = useState(''); // Initialize useRouter
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');// Initialize useRouter
 
   const initialize = async () => {
     if (initialized.current) {
@@ -139,13 +140,15 @@ export const AuthProvider = (props) => {
       } else {
         router.push('/user');
       }
-      setSuccessMessage(response.data.message);
-      return response;
+      const message = response.data.message || 'Login successful';
+      setSuccessMessage(message);
+      setErrorMessage('');
+      return { message, success: true }
     } catch (error) {
-      console.error(
-        'Login failed:',
-        error.response ? error.response.data : error.message,
-      );
+      const errorMessage = error.response?.data?.message || 'Login failed';
+      setErrorMessage(errorMessage);
+      setSuccessMessage(''); // Clear any previous success message
+      throw new Error(errorMessage);
       
     }
     
@@ -209,6 +212,7 @@ export const AuthProvider = (props) => {
         signIn,
         signUp,
         signOut,
+        successMessage,
       }}
     >
       {children}

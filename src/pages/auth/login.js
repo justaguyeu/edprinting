@@ -1,34 +1,44 @@
-import { useCallback, useState } from 'react';
+// src/pages/auth/login.js
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import NextLink from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography,CircularProgress  } from '@mui/material';
+import { Box, Button, Stack, TextField, Typography, CircularProgress } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 
 const Page = () => {
-  const router = useRouter();
   const auth = useAuth();
+  const [serverMessage, setServerMessage] = useState('');
+
+  useEffect(() => {
+    // Listen for success and error messages from the auth context
+    if (auth.successMessage) {
+      setServerMessage(auth.successMessage);
+    } else if (auth.errorMessage) {
+      setServerMessage(auth.errorMessage);
+    }
+  }, [auth.successMessage, auth.errorMessage]);
 
   const formik = useFormik({
     initialValues: {
-      username: '', // Username field
+      username: '',
       password: '',
       submit: null,
     },
     validationSchema: Yup.object({
-      username: Yup.string().required('Username is required'), // Validate username
+      username: Yup.string().required('Username is required'),
       password: Yup.string().max(255).required('Password is required'),
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signIn(values.username, values.password);
+        const response = await auth.signIn(values.username, values.password);
+        setServerMessage(response.message); // Show the message from server on success
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
+        setServerMessage(err.message); // Show the error message on failure
       }
     },
   });
@@ -58,21 +68,6 @@ const Page = () => {
           <div>
             <Stack spacing={1} sx={{ mb: 3 }}>
               <Typography variant="h4">Login</Typography>
-              {/* <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                Don&apos;t have an account?
-                &nbsp;
-                <Link
-                  component={NextLink}
-                  href="/auth/register"
-                  underline="hover"
-                  variant="subtitle2"
-                >
-                  Register
-                </Link>
-              </Typography> */}
             </Stack>
             <form noValidate onSubmit={formik.handleSubmit}>
               <Stack spacing={3}>
@@ -129,6 +124,16 @@ const Page = () => {
                 )}
                 {formik.isSubmitting ? 'Logging in...' : 'Login'}
               </Button>
+              {/* Display the server message below the button */}
+              {/* {serverMessage && (
+                <Typography
+                  color={formik.errors.submit ? 'error' : 'success'}
+                  sx={{ mt: 2 }}
+                  variant="body2"
+                >
+                  {serverMessage}
+                </Typography>
+              )} */}
             </form>
           </div>
         </Box>
