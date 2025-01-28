@@ -69,8 +69,7 @@ export const AuthProvider = (props) => {
   const initialized = useRef(false);
   const router = useRouter();
   const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');// Initialize useRouter
-
+  const [errorMessage, setErrorMessage] = useState('');
   const initialize = async () => {
     if (initialized.current) {
       return;

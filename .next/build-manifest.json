@@ -12,11 +12,6 @@
   ],
   "rootMainFiles": [],
   "pages": {
-    "/404": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/404.js"
-    ],
     "/_app": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -27,25 +22,25 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/auth/login": [
+    "/debts": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/auth/login.js"
+      "static/chunks/pages/debts.js"
+    ],
+    "/salesdaily": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/salesdaily.js"
+    ],
+    "/stockadd": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/stockadd.js"
     ],
     "/user": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/user.js"
-    ],
-    "/user-settings": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/user-settings.js"
-    ],
-    "/userentry": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/userentry.js"
     ]
   },
   "ampFirstPages": []

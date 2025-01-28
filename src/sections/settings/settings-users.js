@@ -27,38 +27,59 @@ export const SettingsUser = () => {
   const [loadingDeleteUserId, setLoadingDeleteUserId] = useState(null); // Loading for delete user
 
   const fetchUsers = useCallback(async () => {
+    const token = localStorage.getItem('access_token');
+      if (token) {
     try {
-      const response = await axios.get(`${BASE_URL}/api/users/`); // Django backend endpoint for users
+      const response = await axios.get(`${BASE_URL}/api/users/`, {
+      headers: { Authorization: `Bearer ${token}` }, 
+    });
       setUsers(response.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error(
+        'Error fetching data:',
+        error.response ? error.response.data : error.message,
+      );
+  
     }
-  }, []);
+  } else {
+    console.error('No token found');
+  }
+});
 
   const handleAddUser = useCallback(async (event) => {
     event.preventDefault();
-    setLoadingAddUser(true); // Start loading when submitting
+    setLoadingAddUser(true);
+    const token = localStorage.getItem('access_token');
+      if (token) { 
     try {
-      await axios.post(`${BASE_URL}/api/users/`, newUser); // Django backend endpoint to add a user
-      fetchUsers(); // Reload users after adding
-      setNewUser({ username: '', password: '' }); // Reset form fields
+      await axios.post(`${BASE_URL}/api/users/`, newUser, {
+        headers: { Authorization: `Bearer ${token}` }, 
+      });
+      fetchUsers(); 
+      setNewUser({ username: '', password: '' }); 
     } catch (error) {
       console.error('Error adding user:', error);
     } finally {
-      setLoadingAddUser(false); // Stop loading after completion
+      setLoadingAddUser(false); 
     }
+  };
   }, [newUser, fetchUsers]);
 
   const handleDeleteUser = useCallback(async (userId) => {
-    setLoadingDeleteUserId(userId); // Set loading state for the specific user
+    setLoadingDeleteUserId(userId);
+    const token = localStorage.getItem('access_token');
+      if (token) { 
     try {
-      await axios.delete(`${BASE_URL}/api/users/${userId}/`); // Django backend endpoint to delete a user
-      fetchUsers(); // Reload users after deletion
+      await axios.delete(`${BASE_URL}/api/users/${userId}/`, {
+        headers: { Authorization: `Bearer ${token}` }, 
+      });
+      fetchUsers(); 
     } catch (error) {
       console.error('Error deleting user:', error);
     } finally {
-      setLoadingDeleteUserId(null); // Reset loading state after completion
+      setLoadingDeleteUserId(null); 
     }
+  };
   }, [fetchUsers]);
 
   useEffect(() => {
